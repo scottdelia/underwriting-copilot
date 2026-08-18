@@ -1,0 +1,1227 @@
+{
+  "carrier_id": "cardinal",
+  "carrier_name": "Cardinal Assurance Company",
+  "doc_id": "cardinal_underwriting_guide.pdf",
+  "doc_title": "Underwriting Reference Manual",
+  "doc_version": "Revision C, 2026",
+  "gendered_build_chart": false,
+  "rate_class_map": {
+    "Super Preferred NT": "preferred_plus",
+    "Preferred NT": "preferred",
+    "Select NT": "standard_plus",
+    "Standard NT": "standard"
+  },
+  "build_chart": [
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 56,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 123,
+      "gender": "any",
+      "row_key": "4' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 56,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 129,
+      "gender": "any",
+      "row_key": "4' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 56,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 141,
+      "gender": "any",
+      "row_key": "4' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 56,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 147,
+      "gender": "any",
+      "row_key": "4' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 57,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 127,
+      "gender": "any",
+      "row_key": "4' 9\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 57,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 134,
+      "gender": "any",
+      "row_key": "4' 9\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 57,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 146,
+      "gender": "any",
+      "row_key": "4' 9\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 57,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 153,
+      "gender": "any",
+      "row_key": "4' 9\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 58,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 132,
+      "gender": "any",
+      "row_key": "4' 10\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 58,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 139,
+      "gender": "any",
+      "row_key": "4' 10\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 58,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 151,
+      "gender": "any",
+      "row_key": "4' 10\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 58,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 158,
+      "gender": "any",
+      "row_key": "4' 10\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 59,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 136,
+      "gender": "any",
+      "row_key": "4' 11\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 59,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 144,
+      "gender": "any",
+      "row_key": "4' 11\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 59,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 156,
+      "gender": "any",
+      "row_key": "4' 11\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 59,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 163,
+      "gender": "any",
+      "row_key": "4' 11\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 60,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 141,
+      "gender": "any",
+      "row_key": "5' 0\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 60,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 149,
+      "gender": "any",
+      "row_key": "5' 0\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 60,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 162,
+      "gender": "any",
+      "row_key": "5' 0\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 60,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 169,
+      "gender": "any",
+      "row_key": "5' 0\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 61,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 146,
+      "gender": "any",
+      "row_key": "5' 1\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 61,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 153,
+      "gender": "any",
+      "row_key": "5' 1\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 61,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 167,
+      "gender": "any",
+      "row_key": "5' 1\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 61,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 175,
+      "gender": "any",
+      "row_key": "5' 1\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 62,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 150,
+      "gender": "any",
+      "row_key": "5' 2\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 62,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 159,
+      "gender": "any",
+      "row_key": "5' 2\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 62,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 173,
+      "gender": "any",
+      "row_key": "5' 2\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 62,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 180,
+      "gender": "any",
+      "row_key": "5' 2\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 63,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 155,
+      "gender": "any",
+      "row_key": "5' 3\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 63,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 164,
+      "gender": "any",
+      "row_key": "5' 3\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 63,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 178,
+      "gender": "any",
+      "row_key": "5' 3\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 63,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 186,
+      "gender": "any",
+      "row_key": "5' 3\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 64,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 160,
+      "gender": "any",
+      "row_key": "5' 4\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 64,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 169,
+      "gender": "any",
+      "row_key": "5' 4\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 64,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 184,
+      "gender": "any",
+      "row_key": "5' 4\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 64,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 192,
+      "gender": "any",
+      "row_key": "5' 4\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 65,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 165,
+      "gender": "any",
+      "row_key": "5' 5\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 65,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 174,
+      "gender": "any",
+      "row_key": "5' 5\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 65,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 190,
+      "gender": "any",
+      "row_key": "5' 5\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 65,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 198,
+      "gender": "any",
+      "row_key": "5' 5\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 66,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 170,
+      "gender": "any",
+      "row_key": "5' 6\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 66,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 180,
+      "gender": "any",
+      "row_key": "5' 6\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 66,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 196,
+      "gender": "any",
+      "row_key": "5' 6\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 66,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 204,
+      "gender": "any",
+      "row_key": "5' 6\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 67,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 176,
+      "gender": "any",
+      "row_key": "5' 7\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 67,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 185,
+      "gender": "any",
+      "row_key": "5' 7\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 67,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 202,
+      "gender": "any",
+      "row_key": "5' 7\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 67,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 211,
+      "gender": "any",
+      "row_key": "5' 7\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 68,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 181,
+      "gender": "any",
+      "row_key": "5' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 68,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 191,
+      "gender": "any",
+      "row_key": "5' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 68,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 208,
+      "gender": "any",
+      "row_key": "5' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 68,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 217,
+      "gender": "any",
+      "row_key": "5' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 69,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 186,
+      "gender": "any",
+      "row_key": "5' 9\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 69,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 196,
+      "gender": "any",
+      "row_key": "5' 9\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 69,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 214,
+      "gender": "any",
+      "row_key": "5' 9\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 69,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 223,
+      "gender": "any",
+      "row_key": "5' 9\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 70,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 192,
+      "gender": "any",
+      "row_key": "5' 10\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 70,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 202,
+      "gender": "any",
+      "row_key": "5' 10\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 70,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 220,
+      "gender": "any",
+      "row_key": "5' 10\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 70,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 230,
+      "gender": "any",
+      "row_key": "5' 10\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 71,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 197,
+      "gender": "any",
+      "row_key": "5' 11\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 71,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 208,
+      "gender": "any",
+      "row_key": "5' 11\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 71,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 227,
+      "gender": "any",
+      "row_key": "5' 11\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 71,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 237,
+      "gender": "any",
+      "row_key": "5' 11\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 72,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 203,
+      "gender": "any",
+      "row_key": "6' 0\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 72,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 214,
+      "gender": "any",
+      "row_key": "6' 0\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 72,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 233,
+      "gender": "any",
+      "row_key": "6' 0\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 72,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 243,
+      "gender": "any",
+      "row_key": "6' 0\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 73,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 208,
+      "gender": "any",
+      "row_key": "6' 1\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 73,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 220,
+      "gender": "any",
+      "row_key": "6' 1\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 73,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 240,
+      "gender": "any",
+      "row_key": "6' 1\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 73,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 250,
+      "gender": "any",
+      "row_key": "6' 1\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 74,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 214,
+      "gender": "any",
+      "row_key": "6' 2\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 74,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 226,
+      "gender": "any",
+      "row_key": "6' 2\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 74,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 246,
+      "gender": "any",
+      "row_key": "6' 2\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 74,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 257,
+      "gender": "any",
+      "row_key": "6' 2\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 75,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 220,
+      "gender": "any",
+      "row_key": "6' 3\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 75,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 232,
+      "gender": "any",
+      "row_key": "6' 3\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 75,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 253,
+      "gender": "any",
+      "row_key": "6' 3\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 75,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 264,
+      "gender": "any",
+      "row_key": "6' 3\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 76,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 226,
+      "gender": "any",
+      "row_key": "6' 4\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 76,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 238,
+      "gender": "any",
+      "row_key": "6' 4\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 76,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 260,
+      "gender": "any",
+      "row_key": "6' 4\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 76,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 271,
+      "gender": "any",
+      "row_key": "6' 4\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 77,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 232,
+      "gender": "any",
+      "row_key": "6' 5\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 77,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 245,
+      "gender": "any",
+      "row_key": "6' 5\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 77,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 267,
+      "gender": "any",
+      "row_key": "6' 5\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 77,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 278,
+      "gender": "any",
+      "row_key": "6' 5\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 78,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 238,
+      "gender": "any",
+      "row_key": "6' 6\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 78,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 251,
+      "gender": "any",
+      "row_key": "6' 6\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 78,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 273,
+      "gender": "any",
+      "row_key": "6' 6\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 78,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 286,
+      "gender": "any",
+      "row_key": "6' 6\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 79,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 244,
+      "gender": "any",
+      "row_key": "6' 7\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 79,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 257,
+      "gender": "any",
+      "row_key": "6' 7\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 79,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 281,
+      "gender": "any",
+      "row_key": "6' 7\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 79,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 293,
+      "gender": "any",
+      "row_key": "6' 7\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 80,
+      "rate_class": "Super Preferred NT",
+      "canonical_class": "preferred_plus",
+      "max_weight_lbs": 250,
+      "gender": "any",
+      "row_key": "6' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 80,
+      "rate_class": "Preferred NT",
+      "canonical_class": "preferred",
+      "max_weight_lbs": 264,
+      "gender": "any",
+      "row_key": "6' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 80,
+      "rate_class": "Select NT",
+      "canonical_class": "standard_plus",
+      "max_weight_lbs": 288,
+      "gender": "any",
+      "row_key": "6' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    },
+    {
+      "carrier_id": "cardinal",
+      "height_inches": 80,
+      "rate_class": "Standard NT",
+      "canonical_class": "standard",
+      "max_weight_lbs": 300,
+      "gender": "any",
+      "row_key": "6' 8\"",
+      "page": 2,
+      "doc_id": "cardinal_underwriting_guide.pdf"
+    }
+  ],
+  "conditions": [
+    {
+      "carrier_id": "cardinal",
+      "doc_id": "cardinal_underwriting_guide.pdf",
+      "condition": "type_2_diabetes",
+      "heading": "Diabetes (Type 2)",
+      "best_available_class": "Select NT",
+      "disqualifiers": [
+        "body mass index above 32",
+        "any documented diabetic complication",
+        "A1c above 8.5",
+        "insulin use within the past 24 months"
+      ],
+      "prose_page": 4,
+      "table_page": 4,
+      "table_title": "Exhibit 6 - Type 2 Diabetes Underwriting Grid",
+      "table_rows": [
+        [
+          "6.5 or below",
+          "Preferred NT",
+          "Select NT",
+          "Standard NT"
+        ],
+        [
+          "6.6 - 7.5",
+          "Select NT",
+          "Select NT",
+          "Standard NT"
+        ],
+        [
+          "7.6 - 8.5",
+          "Standard NT",
+          "Standard NT",
+          "Table 2"
+        ],
+        [
+          "Above 8.5",
+          "Table 2",
+          "Table 4",
+          "Decline"
+        ]
+      ]
+    },
+    {
+      "carrier_id": "cardinal",
+      "doc_id": "cardinal_underwriting_guide.pdf",
+      "condition": "hyperlipidemia",
+      "heading": "Cholesterol and Lipids",
+      "best_available_class": "Super Preferred NT",
+      "disqualifiers": [
+        "cholesterol to HDL ratio above 7.0",
+        "total cholesterol above 300 without a favorable ratio"
+      ],
+      "prose_page": 4,
+      "table_page": 4,
+      "table_title": "Exhibit 4 - Total Cholesterol / HDL Ratio Limits",
+      "table_rows": [
+        [
+          "Super Preferred NT",
+          "5.0",
+          "260"
+        ],
+        [
+          "Preferred NT",
+          "6.0",
+          "280"
+        ],
+        [
+          "Select NT",
+          "7.0",
+          "300"
+        ],
+        [
+          "Standard NT",
+          "8.0",
+          "\u2014"
+        ]
+      ]
+    },
+    {
+      "carrier_id": "cardinal",
+      "doc_id": "cardinal_underwriting_guide.pdf",
+      "condition": "atrial_fibrillation",
+      "heading": "Atrial Fibrillation",
+      "best_available_class": "Standard NT",
+      "disqualifiers": [
+        "structural heart disease",
+        "history of stroke or transient ischemic attack",
+        "unstable anticoagulation"
+      ],
+      "prose_page": 5,
+      "table_page": null,
+      "table_title": null,
+      "table_rows": null
+    }
+  ],
+  "prose_sections": [
+    {
+      "heading": "Nicotine Use",
+      "page": 5
+    },
+    {
+      "heading": "Coverage Amount and Age Limits",
+      "page": 5
+    },
+    {
+      "heading": "Build and Body Composition",
+      "page": 5
+    }
+  ],
+  "page_count": 5
+}

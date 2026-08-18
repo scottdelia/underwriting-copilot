@@ -1,0 +1,30 @@
+# Pinned per section 7 of the spec. Regenerate with:
+#   pip install -r requirements.in && pip freeze > requirements.txt
+
+# --- Web framework ---
+fastapi==0.118.0
+uvicorn[standard]==0.37.0
+pydantic==2.11.9
+pydantic-settings==2.11.0
+slowapi==0.1.9
+
+# --- LLM ---
+anthropic==0.69.0
+
+# --- Vector store and embeddings ---
+chromadb==1.1.0
+sentence-transformers==5.1.0
+voyageai==0.3.4
+
+# --- PDF handling ---
+pypdf==6.1.1
+pdfplumber==0.11.7
+pymupdf==1.26.4
+
+# --- Corpus generation (dev-only, used by tools/generate_corpus.py) ---
+reportlab==4.4.4
+
+# --- Testing and typing ---
+pytest==8.4.2
+mypy==1.18.2
+httpx==0.28.1
