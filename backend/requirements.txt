@@ -13,7 +13,9 @@ anthropic==0.69.0
 
 # --- Vector store and embeddings ---
 chromadb==1.1.0
-sentence-transformers==5.1.0
+# sentence-transformers is intentionally NOT used: the local embedding path
+# runs all-MiniLM-L6-v2 through the onnxruntime model bundled with Chroma,
+# which is a ~90MB download with no PyTorch dependency (~2GB).
 voyageai==0.3.4
 
 # --- PDF handling ---
