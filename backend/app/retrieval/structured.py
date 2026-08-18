@@ -216,6 +216,64 @@ def lookup_condition_rules(
     ]
 
 
+def lookup_threshold_tables(
+    db_path: Path,
+    carrier_id: str,
+    pages: list[int] | None = None,
+) -> list[dict]:
+    """Return a carrier's transcribed threshold tables.
+
+    These carry the refinements the headline condition rule leaves out. Granite
+    Peak's diabetes rule states a best available class of Standard; its table is
+    what says that a BMI above 30 forces a minimum of Table 2. A verdict built
+    from the rule alone is too generous, so synthesis needs both.
+
+    Args:
+        db_path: Path to the structured store.
+        carrier_id: The carrier to look up.
+        pages: Restrict to these pages. Defaults to every page.
+
+    Returns:
+        Tables with their columns, rows, and footnotes decoded.
+    """
+    with connect(db_path, read_only=True) as conn:
+        if pages:
+            placeholders = ",".join("?" for _ in pages)
+            rows = conn.execute(
+                f"""
+                SELECT doc_id, page, title, columns_json, rows_json,
+                       footnotes_json
+                FROM threshold_tables
+                WHERE carrier_id = ? AND page IN ({placeholders})
+                ORDER BY page
+                """,  # noqa: S608 - placeholders only, values are bound
+                (carrier_id, *pages),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                """
+                SELECT doc_id, page, title, columns_json, rows_json,
+                       footnotes_json
+                FROM threshold_tables
+                WHERE carrier_id = ?
+                ORDER BY page
+                """,
+                (carrier_id,),
+            ).fetchall()
+
+    return [
+        {
+            "doc_id": row["doc_id"],
+            "page": row["page"],
+            "title": row["title"],
+            "columns": json.loads(row["columns_json"]),
+            "rows": json.loads(row["rows_json"]),
+            "footnotes": json.loads(row["footnotes_json"]),
+        }
+        for row in rows
+    ]
+
+
 def indexed_carriers(db_path: Path) -> list[str]:
     """Return the carriers that have build chart data."""
     with connect(db_path, read_only=True) as conn:

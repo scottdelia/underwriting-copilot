@@ -33,6 +33,7 @@ from app.ingest.store import (
     insert_anomalies,
     insert_build_entries,
     insert_condition_rules,
+    insert_threshold_tables,
 )
 from app.models.extraction import ExtractionAnomaly
 
@@ -70,7 +71,7 @@ def extract_document(
             f"    python tools/generate_corpus.py"
         )
 
-    pages = [c.page for c in classify_document(path) if c.has_tables]
+    pages = [c.page for c in classify_document(path) if c.has_structured_content]
     logger.info("%s: extracting pages %s", document["filename"], pages)
 
     results: list[PageExtraction] = []
@@ -146,8 +147,16 @@ def build(settings: Settings | None = None, *, reset: bool = True) -> dict[str, 
         # the only level at which a shifted column becomes visible.
         anomalies += check_monotonic_by_height(entries)
 
+        thresholds = [(r.page, t) for r in results for t in r.threshold_tables]
+
         inserted_entries = insert_build_entries(settings.sqlite_path, entries)
         inserted_rules = insert_condition_rules(settings.sqlite_path, rules)
+        inserted_tables = insert_threshold_tables(
+            settings.sqlite_path,
+            document["carrier_id"],
+            document["filename"],
+            thresholds,
+        )
         insert_anomalies(settings.sqlite_path, anomalies)
         all_anomalies += anomalies
 
@@ -160,6 +169,7 @@ def build(settings: Settings | None = None, *, reset: bool = True) -> dict[str, 
             "pages_extracted": len(results),
             "build_entries": inserted_entries,
             "condition_rules": inserted_rules,
+            "threshold_tables": inserted_tables,
             "anomalies": len(anomalies),
             "rejected": sum(1 for a in anomalies if a.severity == "rejected"),
             "input_tokens": doc_in,

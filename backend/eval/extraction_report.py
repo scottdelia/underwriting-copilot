@@ -198,6 +198,66 @@ def score_carrier(db_path: Path, carrier_id: str) -> CarrierScore:
     return score
 
 
+def score_condition_rules(db_path: Path, carrier_ids: list[str]) -> dict[str, Any]:
+    """Measure how many of the documented condition rules were extracted.
+
+    This metric exists because its absence hid a bug. The first version of the
+    report counted extracted condition rules without comparing them to the
+    documented set, so an extraction that found nine of eleven reported "9" and
+    looked fine. Two rules were missing because the pages stating them printed
+    no table and were therefore never sent to the model.
+
+    A count is not a score. Anything worth relying on needs a denominator.
+
+    Args:
+        db_path: Path to the structured store.
+        carrier_ids: Carriers to score.
+
+    Returns:
+        Coverage totals plus the specific conditions missing per carrier.
+    """
+    with connect(db_path, read_only=True) as conn:
+        rows = conn.execute(
+            "SELECT carrier_id, condition FROM condition_rules"
+        ).fetchall()
+
+    found: dict[str, set[str]] = {}
+    for row in rows:
+        found.setdefault(row["carrier_id"], set()).add(row["condition"])
+
+    per_carrier = []
+    total_expected = total_found = 0
+    for carrier_id in carrier_ids:
+        path = GROUND_TRUTH_DIR / f"{carrier_id}.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        expected = {c["condition"] for c in data["conditions"]}
+        pages = {c["condition"]: c["prose_page"] for c in data["conditions"]}
+        got = found.get(carrier_id, set())
+
+        missing = sorted(expected - got)
+        total_expected += len(expected)
+        total_found += len(expected & got)
+
+        per_carrier.append(
+            {
+                "carrier_id": carrier_id,
+                "expected": len(expected),
+                "found": len(expected & got),
+                "missing": [f"{c} (p{pages[c]})" for c in missing],
+                "unexpected": sorted(got - expected),
+            }
+        )
+
+    return {
+        "expected": total_expected,
+        "found": total_found,
+        "coverage_pct": (
+            round(100.0 * total_found / total_expected, 2) if total_expected else 0.0
+        ),
+        "per_carrier": per_carrier,
+    }
+
+
 def build_report(db_path: Path, carrier_ids: list[str]) -> dict[str, Any]:
     """Score every carrier and summarise the run.
 
@@ -246,6 +306,7 @@ def build_report(db_path: Path, carrier_ids: list[str]) -> dict[str, Any]:
             "condition_rules_extracted": condition_rows,
         },
         "per_carrier": [s.as_dict() for s in scores],
+        "condition_rules": score_condition_rules(db_path, carrier_ids),
         "anomalies": anomalies,
     }
 
@@ -278,7 +339,15 @@ def main() -> None:
     print(f"  value accuracy       {totals['value_accuracy_pct']}%")
     print(f"  citation accuracy    {totals['citation_accuracy_pct']}%")
     print(f"  fabricated rows      {totals['fabricated_rows']}")
-    print(f"  condition rules      {totals['condition_rules_extracted']}")
+
+    conditions = report["condition_rules"]
+    print(
+        f"  condition rules      {conditions['found']}/{conditions['expected']} "
+        f"({conditions['coverage_pct']}%)"
+    )
+    for carrier in conditions["per_carrier"]:
+        for missing in carrier["missing"]:
+            print(f"       MISSING  {carrier['carrier_id']}: {missing}")
     print()
     for carrier in report["per_carrier"]:
         print(

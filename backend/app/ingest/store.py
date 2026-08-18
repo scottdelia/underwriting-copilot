@@ -67,6 +67,27 @@ CREATE TABLE IF NOT EXISTS condition_rules (
 CREATE INDEX IF NOT EXISTS idx_condition_lookup
     ON condition_rules (carrier_id, condition);
 
+-- Threshold tables are stored as transcribed rather than parsed into columns.
+-- Their shape varies per carrier: one guide keys diabetes on A1c alone, another
+-- on A1c crossed with BMI, a third on A1c crossed with duration. Forcing those
+-- into a shared column layout would require inventing a schema none of them
+-- share, and would discard the refinement each table actually encodes. Keeping
+-- the transcription intact lets synthesis quote the applicable row.
+CREATE TABLE IF NOT EXISTS threshold_tables (
+    id            INTEGER PRIMARY KEY,
+    carrier_id    TEXT NOT NULL,
+    doc_id        TEXT NOT NULL,
+    page          INTEGER NOT NULL,
+    title         TEXT,
+    columns_json  TEXT NOT NULL,
+    rows_json     TEXT NOT NULL,
+    footnotes_json TEXT NOT NULL,
+    UNIQUE (carrier_id, page, title)
+);
+
+CREATE INDEX IF NOT EXISTS idx_threshold_lookup
+    ON threshold_tables (carrier_id, page);
+
 CREATE TABLE IF NOT EXISTS extraction_anomalies (
     id         INTEGER PRIMARY KEY,
     carrier_id TEXT NOT NULL,
@@ -127,6 +148,7 @@ def initialize(db_path: Path, *, reset: bool = False) -> None:
             for table in (
                 "build_chart_entries",
                 "condition_rules",
+                "threshold_tables",
                 "extraction_anomalies",
             ):
                 conn.execute(f"DELETE FROM {table}")  # noqa: S608 - fixed literal
@@ -214,6 +236,51 @@ def insert_condition_rules(db_path: Path, rules: list[ConditionRule]) -> int:
     return after - before
 
 
+def insert_threshold_tables(
+    db_path: Path,
+    carrier_id: str,
+    doc_id: str,
+    tables: list[tuple[int, dict]],
+) -> int:
+    """Store transcribed threshold tables.
+
+    Args:
+        db_path: Path to the database file.
+        carrier_id: Owning carrier.
+        doc_id: Source document filename.
+        tables: (page, table dict) pairs as returned by extraction.
+
+    Returns:
+        The number of rows actually inserted.
+    """
+    if not tables:
+        return 0
+    with connect(db_path) as conn:
+        before = conn.execute("SELECT COUNT(*) FROM threshold_tables").fetchone()[0]
+        conn.executemany(
+            """
+            INSERT OR IGNORE INTO threshold_tables
+                (carrier_id, doc_id, page, title, columns_json, rows_json,
+                 footnotes_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                (
+                    carrier_id,
+                    doc_id,
+                    page,
+                    table.get("title"),
+                    json.dumps(table.get("columns", [])),
+                    json.dumps(table.get("rows", [])),
+                    json.dumps(table.get("footnotes", [])),
+                )
+                for page, table in tables
+            ],
+        )
+        after = conn.execute("SELECT COUNT(*) FROM threshold_tables").fetchone()[0]
+    return after - before
+
+
 def insert_anomalies(db_path: Path, anomalies: list[ExtractionAnomaly]) -> int:
     """Record extraction anomalies.
 
@@ -258,6 +325,7 @@ def counts(db_path: Path) -> dict[str, int]:
             for table in (
                 "build_chart_entries",
                 "condition_rules",
+                "threshold_tables",
                 "extraction_anomalies",
             )
         }

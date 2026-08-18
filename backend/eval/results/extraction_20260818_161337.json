@@ -1,0 +1,94 @@
+{
+  "totals": {
+    "expected_rows": 625,
+    "found_rows": 625,
+    "coverage_pct": 100.0,
+    "value_accuracy_pct": 100.0,
+    "citation_accuracy_pct": 100.0,
+    "fabricated_rows": 0,
+    "condition_rules_extracted": 9
+  },
+  "per_carrier": [
+    {
+      "carrier_id": "cardinal",
+      "expected_rows": 100,
+      "found_rows": 100,
+      "coverage_pct": 100.0,
+      "value_accuracy_pct": 100.0,
+      "citation_accuracy_pct": 100.0,
+      "counts": {
+        "missing": 0,
+        "wrong_value": 0,
+        "wrong_page": 0,
+        "unexpected": 0
+      },
+      "examples": {
+        "missing": [],
+        "wrong_value": [],
+        "wrong_page": [],
+        "unexpected": []
+      }
+    },
+    {
+      "carrier_id": "granite",
+      "expected_rows": 125,
+      "found_rows": 125,
+      "coverage_pct": 100.0,
+      "value_accuracy_pct": 100.0,
+      "citation_accuracy_pct": 100.0,
+      "counts": {
+        "missing": 0,
+        "wrong_value": 0,
+        "wrong_page": 0,
+        "unexpected": 0
+      },
+      "examples": {
+        "missing": [],
+        "wrong_value": [],
+        "wrong_page": [],
+        "unexpected": []
+      }
+    },
+    {
+      "carrier_id": "meridian",
+      "expected_rows": 200,
+      "found_rows": 200,
+      "coverage_pct": 100.0,
+      "value_accuracy_pct": 100.0,
+      "citation_accuracy_pct": 100.0,
+      "counts": {
+        "missing": 0,
+        "wrong_value": 0,
+        "wrong_page": 0,
+        "unexpected": 0
+      },
+      "examples": {
+        "missing": [],
+        "wrong_value": [],
+        "wrong_page": [],
+        "unexpected": []
+      }
+    },
+    {
+      "carrier_id": "northstar",
+      "expected_rows": 200,
+      "found_rows": 200,
+      "coverage_pct": 100.0,
+      "value_accuracy_pct": 100.0,
+      "citation_accuracy_pct": 100.0,
+      "counts": {
+        "missing": 0,
+        "wrong_value": 0,
+        "wrong_page": 0,
+        "unexpected": 0
+      },
+      "examples": {
+        "missing": [],
+        "wrong_value": [],
+        "wrong_page": [],
+        "unexpected": []
+      }
+    }
+  ],
+  "anomalies": []
+}

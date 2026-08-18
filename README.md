@@ -24,7 +24,7 @@ Built in phases. This is what currently runs.
 |---|---|---|
 | 0 | Synthetic corpus generator + exact ground truth | Done |
 | 1 | App skeleton, security, prose extraction, vector index, `/search` | Done |
-| 2 | Vision-based table extraction, SQLite, rate class normalization | Not started |
+| 2 | Vision-based table extraction, SQLite, rate class normalization | Done |
 | 3 | Prospect parser, retrieval router, synthesis with citations | Not started |
 | 4 | 50-item eval dataset and scoring harness | Not started |
 | 5 | Frontend | Not started |
@@ -32,6 +32,31 @@ Built in phases. This is what currently runs.
 
 `/search` returns retrieved prose chunks with citations. It does not yet produce
 carrier verdicts — that is phase 3.
+
+### Phase 2 extraction accuracy
+
+Measured against ground truth, all 625 build chart cells, not a sample:
+
+| Metric | Result |
+|---|---|
+| Row coverage | 100% (625/625) |
+| Value accuracy | 100% |
+| Citation accuracy | 100% |
+| Fabricated rows | 0 |
+| Condition rules | 100% (11/11) |
+
+Run cost: **$0.64**, 13 pages, ~3 minutes on Sonnet 5 at 150 DPI.
+
+The scorer is verified by a negative control: planting a wrong weight, a wrong
+page, a deleted row, a fabricated row, and a deleted condition rule into a copy
+of the store drops every corresponding metric below 100%. A scorer that cannot
+fail is not a measurement.
+
+Reproduce with:
+
+```bash
+cd backend && python -m app.ingest.build_tables && python -m eval.extraction_report
+```
 
 ---
 
@@ -126,8 +151,9 @@ corpus/*.pdf
     +-- prose  --> font-size + table-geometry filtering --> section-aligned
     |              chunks with page numbers --> Chroma (cosine)
     |
-    +-- tables --> [phase 2] page classification --> vision extraction -->
-                   Pydantic validation --> SQLite
+    +-- pages  --> 3-signal classification --> vision extraction --> schema +
+                   semantic validation --> SQLite (build charts, condition
+                   rules, threshold tables, anomalies)
 ```
 
 Prose and tables are two different extraction problems. Running a build chart
@@ -149,13 +175,23 @@ backend/app/
     extract_text.py   prose extraction and chunking
     embeddings.py     local (free, no key) or Voyage backends
     build_index.py    corpus -> Chroma
+    classify_pages.py which pages hold structured content
+    extract_tables.py vision extraction + 3 layers of validation
+    normalize.py      carrier rate classes -> canonical ladder
+    store.py          SQLite persistence
+    build_tables.py   corpus -> SQLite
   retrieval/
     semantic.py       vector search over prose
+    structured.py     SQL lookups for build limits and condition rules
+  synthesis/
+    prompts.py        every prompt, versioned
   security/
     auth.py           shared-secret gate
     sanitize.py       input validation, prompt-injection fencing
   models/schemas.py   Pydantic models for every boundary
 backend/eval/ground_truth/   exact expected extraction, per carrier
+backend/eval/extraction_report.py  scores extraction against ground truth
+backend/eval/results/        timestamped run outputs
 tools/                       corpus generator
 ```
 

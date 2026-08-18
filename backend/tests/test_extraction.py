@@ -490,3 +490,159 @@ def test_anomalies_are_persisted_with_the_data(db: Path) -> None:
         ],
     )
     assert counts(db)["extraction_anomalies"] == 1
+
+
+# ---------------------------------------------------------------------------
+# Page classification
+# ---------------------------------------------------------------------------
+
+CORPUS_DIR = Path(__file__).resolve().parent.parent.parent / "corpus"
+GROUND_TRUTH_DIR = Path(__file__).resolve().parent.parent / "eval" / "ground_truth"
+
+CARRIER_IDS = ["northstar", "cardinal", "meridian", "granite"]
+
+
+def _guide(carrier_id: str) -> Path:
+    path = CORPUS_DIR / f"{carrier_id}_underwriting_guide.pdf"
+    if not path.exists():
+        pytest.skip("corpus not generated; run tools/generate_corpus.py")
+    return path
+
+
+def test_rule_language_detects_an_eligibility_statement() -> None:
+    """The third signal fires on the verbs of an underwriting rule."""
+    from app.ingest.classify_pages import MIN_RULE_LANGUAGE_MATCHES, RULE_LANGUAGE_RE
+
+    prose = (
+        "Applicants may be considered for Standard Plus provided the A1c is "
+        "below 7.0. An A1c of 9.0 or greater is not eligible."
+    )
+    assert len(RULE_LANGUAGE_RE.findall(prose)) >= MIN_RULE_LANGUAGE_MATCHES
+
+
+def test_rule_language_ignores_ordinary_prose() -> None:
+    """Marketing and product copy must not trip the signal.
+
+    A page describing product durations and face amounts is dense with numbers
+    but states no eligibility rule, so it should not be sent for extraction on
+    this signal alone.
+    """
+    from app.ingest.classify_pages import MIN_RULE_LANGUAGE_MATCHES, RULE_LANGUAGE_RE
+
+    prose = (
+        "Level term is offered in 10, 15, 20, and 30 year durations. Face "
+        "amounts range from $100,000 to $5,000,000."
+    )
+    assert len(RULE_LANGUAGE_RE.findall(prose)) < MIN_RULE_LANGUAGE_MATCHES
+
+
+@pytest.mark.parametrize("carrier_id", CARRIER_IDS)
+def test_every_condition_page_is_selected_for_extraction(carrier_id: str) -> None:
+    """No page stating a condition rule may be skipped.
+
+    This is the regression test for the bug that lost two of eleven condition
+    rules. Classification originally selected for tables, so a page stating a
+    rule without printing a table was never sent to the model and its rule was
+    silently absent. Nothing failed -- the data just was not there.
+    """
+    import json
+
+    from app.ingest.classify_pages import extraction_pages
+
+    truth = json.loads(
+        (GROUND_TRUTH_DIR / f"{carrier_id}.json").read_text(encoding="utf-8")
+    )
+    condition_pages = {c["prose_page"] for c in truth["conditions"]}
+    selected = set(extraction_pages(_guide(carrier_id)))
+
+    assert condition_pages <= selected, (
+        f"{carrier_id}: condition rules on pages "
+        f"{sorted(condition_pages - selected)} would never be extracted"
+    )
+
+
+@pytest.mark.parametrize("carrier_id", CARRIER_IDS)
+def test_every_build_chart_page_is_selected_for_extraction(carrier_id: str) -> None:
+    """No page carrying build chart rows may be skipped."""
+    import json
+
+    from app.ingest.classify_pages import extraction_pages
+
+    truth = json.loads(
+        (GROUND_TRUTH_DIR / f"{carrier_id}.json").read_text(encoding="utf-8")
+    )
+    chart_pages = {row["page"] for row in truth["build_chart"]}
+    assert chart_pages <= set(extraction_pages(_guide(carrier_id)))
+
+
+# ---------------------------------------------------------------------------
+# Threshold tables
+# ---------------------------------------------------------------------------
+
+
+def test_threshold_tables_round_trip(db: Path) -> None:
+    """A transcribed table survives storage with its structure intact.
+
+    Threshold tables carry the refinements the headline condition rule leaves
+    out, so losing their rows means a verdict built on the rule alone is too
+    generous.
+    """
+    from app.ingest.store import insert_threshold_tables
+    from app.retrieval.structured import lookup_threshold_tables
+
+    inserted = insert_threshold_tables(
+        db,
+        "granite",
+        "granite.pdf",
+        [
+            (
+                4,
+                {
+                    "title": "Table 7 - Diabetes with Elevated Build",
+                    "columns": ["Body Mass Index", "Minimum Rating"],
+                    "rows": [["30.0 or below", "Standard"], ["30.1 - 35.0", "Table 2"]],
+                    "footnotes": ["‡ An A1c of 7.5 or above adds one table."],
+                },
+            )
+        ],
+    )
+    assert inserted == 1
+
+    tables = lookup_threshold_tables(db, "granite")
+    assert len(tables) == 1
+    assert tables[0]["page"] == 4
+    assert tables[0]["rows"][1] == ["30.1 - 35.0", "Table 2"]
+    # The footnote marker must survive as the character it is, not as a
+    # mojibake replacement.
+    assert tables[0]["footnotes"][0].startswith("‡")
+
+
+def test_threshold_table_inserts_are_idempotent(db: Path) -> None:
+    """Re-running extraction does not duplicate a table."""
+    from app.ingest.store import counts, insert_threshold_tables
+
+    table = (
+        4,
+        {"title": "T", "columns": ["a"], "rows": [["1"]], "footnotes": []},
+    )
+    insert_threshold_tables(db, "granite", "granite.pdf", [table])
+    before = counts(db)["threshold_tables"]
+    insert_threshold_tables(db, "granite", "granite.pdf", [table])
+    assert counts(db)["threshold_tables"] == before
+
+
+def test_threshold_lookup_can_be_scoped_to_pages(db: Path) -> None:
+    """Page scoping lets synthesis pull only the tables it cited."""
+    from app.ingest.store import insert_threshold_tables
+    from app.retrieval.structured import lookup_threshold_tables
+
+    insert_threshold_tables(
+        db,
+        "granite",
+        "granite.pdf",
+        [
+            (4, {"title": "A", "columns": ["x"], "rows": [["1"]], "footnotes": []}),
+            (5, {"title": "B", "columns": ["x"], "rows": [["2"]], "footnotes": []}),
+        ],
+    )
+    assert [t["title"] for t in lookup_threshold_tables(db, "granite", pages=[5])] == ["B"]
