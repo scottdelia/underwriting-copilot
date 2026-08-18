@@ -7,7 +7,7 @@
 # --- Carrier / source documents: never commit. See section 8 of the spec. ---
 # Even though this POC ships a synthetic corpus, the ignore rule stays so the
 # repo cannot accumulate real carrier PDFs if the corpus is ever swapped.
-corpus/
+corpus/*
 !corpus/.gitkeep
 !corpus/MANIFEST.md
 
