@@ -8,7 +8,13 @@ model paraphrased something. Later phases add the router, structured lookups,
 and synthesis on top of this.
 """
 
-from __future__ import annotations
+# NOTE: this module deliberately does not use `from __future__ import
+# annotations`. The rate limiter decorator wraps each endpoint, and FastAPI
+# resolves a deferred (string) annotation against the *wrapper's* globals, which
+# belong to slowapi rather than to this module. `CompareRequest` is not
+# importable there, so the request body silently degraded into a query
+# parameter and every POST returned 422. Evaluating annotations eagerly keeps
+# the types FastAPI sees the same as the ones written here.
 
 import logging
 import time
@@ -18,12 +24,20 @@ from typing import AsyncIterator
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 from app.config import Settings, get_settings
 from app.models.schemas import HealthResponse, SearchHit, SearchResponse
+from app.models.verdict import ComparisonResponse
+from app.synthesis.answer import (
+    answer_build_lookup,
+    answer_prose_question,
+    compare_carriers,
+)
+from app.retrieval.router import plan_query
 from app.retrieval.semantic import IndexNotBuiltError, get_index
 from app.security.auth import verify_shared_secret
 from app.security.sanitize import (
@@ -222,3 +236,112 @@ async def search(
         latency_ms=round((time.perf_counter() - started) * 1000),
         embeddings_backend=index.backend_name,
     )
+
+
+class CompareRequest(BaseModel):
+    """Request body for /compare.
+
+    The query travels in a POST body rather than a query string. Section 7 of
+    the brief forbids user input in URLs, and for good reason here: a real
+    query names a person's medical conditions, and URLs land in access logs,
+    proxy logs, and browser history.
+    """
+
+    query: str = Field(min_length=1, description="Natural-language description.")
+
+
+@app.post(
+    "/compare",
+    response_model=ComparisonResponse,
+    dependencies=[Depends(verify_shared_secret)],
+)
+@limiter.limit(lambda: f"{get_settings().rate_limit_per_hour}/hour")
+async def compare(
+    request: Request,
+    body: CompareRequest,
+    settings: Settings = Depends(get_settings),
+) -> ComparisonResponse:
+    """Compare how each carrier would likely classify a described prospect.
+
+    Args:
+        request: The incoming request. Required by the rate limiter.
+        body: The query.
+        settings: Application settings.
+
+    Returns:
+        One verdict per carrier, each either classified with cited evidence or
+        explicitly abstaining.
+
+    Raises:
+        HTTPException: 400 on invalid input, 503 when the model or the index is
+            unavailable.
+    """
+    import anthropic
+
+    try:
+        query = sanitize_query(body.query, settings.max_query_chars)
+    except InputRejected as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)
+        ) from exc
+
+    if not settings.anthropic_api_key:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Synthesis is not configured.",
+        )
+
+    logger.info("compare %s", redact_query_for_logging(query))
+
+    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+    try:
+        plan = await plan_query(client, settings, query)
+    except Exception as exc:
+        logger.exception("query planning failed")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Could not interpret the query.",
+        ) from exc
+
+    # The routing decision changes the path taken, which is the only reason to
+    # have a router. Three of the four types never reach the synthesis model at
+    # all: they are answered from the store, from the index, or not at all.
+    started = time.perf_counter()
+
+    def direct(answer_obj) -> ComparisonResponse:  # type: ignore[no-untyped-def]
+        return ComparisonResponse(
+            query=query,
+            query_type=plan.query_type,
+            routing_reason=plan.reasoning,
+            profile=plan.profile.model_dump(exclude_none=True),
+            answer=answer_obj,
+            latency_ms=round((time.perf_counter() - started) * 1000),
+            model="none (answered without a model)",
+        )
+
+    # An out-of-scope question is answered by saying so, not by running four
+    # carriers over evidence that cannot address it. This is the abstention the
+    # eval measures, and it costs nothing.
+    if plan.query_type == "out_of_scope":
+        return ComparisonResponse(
+            query=query,
+            query_type=plan.query_type,
+            routing_reason=plan.reasoning,
+            profile={},
+            latency_ms=round((time.perf_counter() - started) * 1000),
+            model="none (answered without a model)",
+        )
+
+    if plan.query_type == "build_lookup":
+        return direct(answer_build_lookup(settings, plan))
+
+    if plan.query_type == "prose_question":
+        try:
+            return direct(answer_prose_question(settings, plan, query))
+        except IndexNotBuiltError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Search index is not available.",
+            ) from exc
+
+    return await compare_carriers(client, settings, query, plan)

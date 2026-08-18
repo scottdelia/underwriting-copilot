@@ -25,13 +25,28 @@ Built in phases. This is what currently runs.
 | 0 | Synthetic corpus generator + exact ground truth | Done |
 | 1 | App skeleton, security, prose extraction, vector index, `/search` | Done |
 | 2 | Vision-based table extraction, SQLite, rate class normalization | Done |
-| 3 | Prospect parser, retrieval router, synthesis with citations | Not started |
+| 3 | Prospect parser, retrieval router, synthesis with citations | Done |
 | 4 | 50-item eval dataset and scoring harness | Not started |
 | 5 | Frontend | Not started |
 | 6 | Deploy, write-up, demo video | Not started |
 
-`/search` returns retrieved prose chunks with citations. It does not yet produce
-carrier verdicts — that is phase 3.
+`POST /compare` answers the demo scenario end to end in **14.3s**, under the
+15-second target. `/search` remains as a developer-facing retrieval probe.
+
+### The demo scenario
+
+> 55 year old male, A1c 7.1 controlled on metformin, BMI 31, non-smoker, $500K
+> 20-year term
+
+| Carrier | Likely class | Normalized | Driven by |
+|---|---|---|---|
+| Northstar Mutual Life | Standard | standard | A1c 7.1 falls in their 7.0–7.9 band (p4) |
+| Cardinal Assurance | Select NT | standard_plus | A1c ≤7.5 and BMI ≤32 both pass (p4) |
+| Meridian Life & Annuity | Standard | standard | A1c 7.1 misses their 6.9 cutoff (p4) |
+| Granite Peak Financial | Table 2 | table_rated | Diabetes + BMI 30.1–35.0 (p4) |
+
+Every claim carries a verbatim excerpt and a page. Zero claims were dropped in
+citation verification.
 
 ### Phase 2 extraction accuracy
 
@@ -164,6 +179,40 @@ prose extraction and handled separately.
 Prose is separated from tables and page furniture using two structural signals
 that PyMuPDF exposes: table bounding boxes, and font size (headings render
 larger than body text; running headers, footers, and footnotes render smaller).
+
+### Routing
+
+The router's decision changes the path taken. Three of the four query types
+never reach the synthesis model at all:
+
+| Query type | Path | Model calls |
+|---|---|---|
+| `prospect_comparison` | Per-carrier evidence → parallel synthesis | 1 + one per carrier |
+| `build_lookup` | SQL row, returned verbatim with its page | 1 (routing only) |
+| `prose_question` | Indexed passage, quoted verbatim | 1 (routing only) |
+| `out_of_scope` | Abstains immediately | 1 (routing only) |
+
+A build limit asked of a language model is a number that might be right; the
+same limit asked of the table is the number. Routing it away from synthesis is
+the entire justification for having a router.
+
+### Citations
+
+Enforced twice, structurally and by verification.
+
+**Structurally:** a `Claim` is a statement *and* a citation. No shape in the
+schema can represent an uncited assertion, so one cannot survive parsing.
+
+**By verification:** after generation, every quoted excerpt is checked against
+the evidence supplied to that carrier's call. An excerpt that cannot be found
+was composed rather than copied, and the claim carrying it is discarded and
+counted. If verification empties the support behind a classification, the
+verdict is **downgraded to an abstention** — a determination whose every
+support was discarded is not a determination.
+
+Each carrier is synthesized in its own call, seeing only its own guide. A
+verdict cannot be supported by another carrier's text because that text is
+never in scope, rather than because a prompt asked the model not to do it.
 
 ### Layout
 

@@ -281,3 +281,145 @@ def indexed_carriers(db_path: Path) -> list[str]:
             "SELECT DISTINCT carrier_id FROM build_chart_entries ORDER BY carrier_id"
         ).fetchall()
     return [row["carrier_id"] for row in rows]
+
+
+@dataclass(frozen=True)
+class BmiBuildVerdict:
+    """The best class a BMI alone allows, with the rows the ceiling came from.
+
+    Separate from BuildVerdict because it is a weaker kind of answer and should
+    not be mistaken for the same thing. A weight lookup reads a published cell.
+    This reads a ceiling *implied* by published cells.
+    """
+
+    carrier_id: str
+    qualifies: bool
+    canonical_class: str | None
+    carrier_label: str | None
+    implied_bmi_limit: float | None
+    applicant_bmi: float
+    gender: str
+    doc_id: str | None
+    page: int | None
+    derivation: str
+
+
+def lookup_build_class_by_bmi(
+    db_path: Path,
+    carrier_id: str,
+    bmi: float,
+    gender: str,
+) -> BmiBuildVerdict:
+    """Find the best class a carrier allows, given a BMI and no height.
+
+    WHY THIS EXISTS AND WHAT IT COSTS
+    ---------------------------------
+    Agents routinely describe a prospect by BMI without giving a height. A build
+    chart is keyed by height, so there is no row to read.
+
+    A build chart is a statement about weight at a height, and BMI is a function
+    of exactly those two quantities, so a BMI ceiling is recoverable from the
+    published cells: each cell implies one, and for a chart built on a BMI rule
+    they agree across heights. The median across heights is taken rather than a
+    single row so that one rounded cell cannot move the answer.
+
+    The honest caveat, and the reason this returns its own type: a chart that was
+    *not* built from an underlying BMI rule will imply different ceilings at
+    different heights, and the median will be a summary of a chart rather than a
+    rule the carrier published. The spread is reported in `derivation` so that a
+    reader can see whether the ceiling is a real limit or an average of an
+    uneven chart. When height is known, `lookup_build_class` is strictly better
+    and should be used instead.
+
+    Args:
+        db_path: Path to the structured store.
+        carrier_id: The carrier to look up.
+        bmi: The applicant's stated BMI.
+        gender: "male", "female", or "any".
+
+    Returns:
+        The best class whose implied BMI ceiling the applicant is inside.
+    """
+    from statistics import median
+
+    with connect(db_path, read_only=True) as conn:
+        rows = conn.execute(
+            """
+            SELECT rate_class, canonical_class, max_weight_lbs, height_inches,
+                   doc_id, page
+            FROM build_chart_entries
+            WHERE carrier_id = ? AND gender IN (?, 'any')
+            """,
+            (carrier_id, gender),
+        ).fetchall()
+
+    if not rows:
+        return BmiBuildVerdict(
+            carrier_id=carrier_id,
+            qualifies=False,
+            canonical_class=None,
+            carrier_label=None,
+            implied_bmi_limit=None,
+            applicant_bmi=bmi,
+            gender=gender,
+            doc_id=None,
+            page=None,
+            derivation="No build chart is indexed for this carrier.",
+        )
+
+    # Group the implied ceilings by the class they belong to.
+    by_class: dict[str, list[float]] = {}
+    meta: dict[str, tuple[str, str, int]] = {}
+    for row in rows:
+        implied = 703.0 * row["max_weight_lbs"] / (row["height_inches"] ** 2)
+        by_class.setdefault(row["rate_class"], []).append(implied)
+        meta[row["rate_class"]] = (
+            row["canonical_class"],
+            row["doc_id"],
+            row["page"],
+        )
+
+    qualifying = [
+        (label, median(values))
+        for label, values in by_class.items()
+        if bmi <= median(values)
+    ]
+    if not qualifying:
+        return BmiBuildVerdict(
+            carrier_id=carrier_id,
+            qualifies=False,
+            canonical_class=None,
+            carrier_label=None,
+            implied_bmi_limit=None,
+            applicant_bmi=bmi,
+            gender=gender,
+            doc_id=None,
+            page=None,
+            derivation=(
+                f"A BMI of {bmi} exceeds the ceiling implied by every "
+                f"published rate class."
+            ),
+        )
+
+    label, limit = min(qualifying, key=lambda item: CANONICAL_ORDER[meta[item[0]][0]])
+    canonical, doc_id, page = meta[label]
+
+    spread = max(by_class[label]) - min(by_class[label])
+    return BmiBuildVerdict(
+        carrier_id=carrier_id,
+        qualifies=True,
+        canonical_class=canonical,
+        carrier_label=label,
+        implied_bmi_limit=round(limit, 1),
+        applicant_bmi=bmi,
+        gender=gender,
+        doc_id=doc_id,
+        page=page,
+        derivation=(
+            f"No height was given, so the limit for {label} was derived from "
+            f"the published weight limits across all {len(by_class[label])} "
+            f"heights in the chart, which imply a BMI ceiling of "
+            f"{limit:.1f} (spread {spread:.2f} across heights). The "
+            f"applicant's stated BMI is {bmi}."
+        ),
+    )

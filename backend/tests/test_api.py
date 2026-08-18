@@ -163,3 +163,65 @@ def test_cors_is_not_a_wildcard(client: TestClient) -> None:
         "/health", headers={"Origin": "https://not-allowed.example"}
     )
     assert response.headers.get("access-control-allow-origin") != "*"
+
+
+# ---------------------------------------------------------------------------
+# /compare
+# ---------------------------------------------------------------------------
+
+
+def test_compare_accepts_a_json_body(client: TestClient) -> None:
+    """The query must be read from the POST body, not from the query string.
+
+    Regression test. The rate limiter wraps each endpoint, and FastAPI resolves
+    a deferred annotation against the wrapper's globals -- which belong to
+    slowapi. `CompareRequest` is not importable there, so the body parameter
+    silently degraded into a query parameter and every POST returned 422 before
+    any code ran. A 422 here means that has regressed.
+    """
+    response = client.post("/compare", json={"query": "   "})
+    assert response.status_code != 422, (
+        "the body parameter is being read as a query parameter"
+    )
+
+
+def test_compare_rejects_an_empty_query(client: TestClient) -> None:
+    """Validation happens at the boundary, before any model call."""
+    response = client.post("/compare", json={"query": "   "})
+    assert response.status_code == 400
+    assert "empty" in response.json()["detail"]
+
+
+def test_compare_rejects_an_oversized_query(client: TestClient) -> None:
+    """Over-length input is refused rather than truncated."""
+    response = client.post("/compare", json={"query": "x" * 5000})
+    assert response.status_code == 400
+    assert "limit" in response.json()["detail"]
+
+
+def test_compare_requires_the_shared_secret_when_configured(
+    gated_client: TestClient,
+) -> None:
+    """/compare is the expensive endpoint, so the gate must cover it."""
+    response = gated_client.post("/compare", json={"query": "a 55 year old male"})
+    assert response.status_code == 401
+
+
+def test_compare_reports_missing_model_configuration(client: TestClient) -> None:
+    """With no API key the endpoint says so rather than failing obscurely."""
+    settings = get_settings()
+    if settings.anthropic_api_key:
+        pytest.skip("an API key is configured; this path is unreachable")
+    response = client.post("/compare", json={"query": "a 55 year old male"})
+    assert response.status_code == 503
+
+
+def test_query_is_not_placed_in_the_url(client: TestClient) -> None:
+    """Medical detail must not travel in a URL.
+
+    Query strings land in access logs, proxy logs, and browser history. /search
+    takes a query parameter because it is a developer-facing retrieval probe;
+    /compare, which carries a described person, takes a POST body.
+    """
+    response = client.get("/compare", params={"query": "a 55 year old male"})
+    assert response.status_code == 405

@@ -70,6 +70,19 @@ class Settings(BaseSettings):
     extraction_dpi: int = 150
     extraction_max_tokens: int = 8000
 
+    # --- Synthesis (phase 3) ---
+    # Sonnet 5 runs adaptive thinking by default, and max_tokens caps thinking
+    # plus response text together. The first version budgeted 4000 and two of
+    # four carriers truncated mid-JSON: the thinking consumed the budget before
+    # the verdict was written. The ceiling is now generous, and effort is what
+    # actually controls spend.
+    synthesis_max_tokens: int = 12000
+    # Synthesis is a scoped task -- apply supplied evidence and quote it -- not
+    # an open reasoning problem. Low effort keeps four parallel calls inside the
+    # 15-second target the brief sets for the demo.
+    synthesis_effort: str = "low"
+    synthesis_prose_top_k: int = 4
+
     # --- Retrieval ---
     semantic_top_k: int = 6
     chunk_target_tokens: int = 600
