@@ -27,7 +27,7 @@ Built in phases. This is what currently runs.
 | 2 | Vision-based table extraction, SQLite, rate class normalization | Done |
 | 3 | Prospect parser, retrieval router, synthesis with citations | Done |
 | 4 | 50-item eval dataset and scoring harness | Done |
-| 5 | Frontend | Not started |
+| 5 | Frontend | Done |
 | 6 | Deploy, write-up, demo video | Not started |
 
 `POST /compare` answers the demo scenario end to end in **14.3s**, under the
@@ -133,11 +133,20 @@ cd backend && python -m app.ingest.build_index
 The first index build downloads a ~90MB embedding model and takes a couple of
 minutes. Subsequent builds take seconds.
 
-Run it:
+Run the backend:
 
 ```bash
 cd backend && uvicorn app.main:app --reload
 ```
+
+Run the frontend in a second terminal:
+
+```bash
+cd frontend && npm install && npm run dev
+```
+
+Open http://localhost:5173. Vite proxies `/api` to the backend, so the browser
+stays on one origin and CORS never enters the picture locally.
 
 ```bash
 curl "http://127.0.0.1:8000/health"
