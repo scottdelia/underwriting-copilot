@@ -1,0 +1,103 @@
+{
+  "timestamp": "2026-08-18T21:55:01.277074+00:00",
+  "config": {
+    "synthesis_model": "claude-sonnet-5",
+    "extraction_model": "claude-sonnet-5",
+    "synthesis_effort": "low",
+    "embeddings_backend": "local",
+    "semantic_top_k": 6,
+    "prompt_versions": [
+      "QUERY_PLAN_SYSTEM v1",
+      "SYNTHESIS_SYSTEM v1",
+      "TABLE_EXTRACTION_SYSTEM v1"
+    ],
+    "dataset_items": 12,
+    "runs": 1
+  },
+  "variance": {
+    "retrieval_hit_rate_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "verdict_accuracy_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "citation_correctness_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "refusal_rate_out_of_corpus_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "stdev": 0.0
+    },
+    "over_abstention_rate_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "stdev": 0.0
+    },
+    "routing_accuracy_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "hallucinated_citations": {
+      "mean": 0,
+      "min": 0,
+      "max": 0,
+      "stdev": 0.0
+    },
+    "latency_p50_ms": {
+      "mean": 2298,
+      "min": 2298,
+      "max": 2298,
+      "stdev": 0.0
+    },
+    "latency_p95_ms": {
+      "mean": 2749,
+      "min": 2749,
+      "max": 2749,
+      "stdev": 0.0
+    }
+  },
+  "runs": [
+    {
+      "retrieval_hit_rate_pct": 100.0,
+      "verdict_accuracy_pct": 100.0,
+      "citation_correctness_pct": 100.0,
+      "refusal_rate_out_of_corpus_pct": 0.0,
+      "over_abstention_rate_pct": 0.0,
+      "hallucinated_citations": 0,
+      "hallucinated_citation_rate_pct": 0.0,
+      "routing_accuracy_pct": 100.0,
+      "latency_p50_ms": 2298,
+      "latency_p95_ms": 2749,
+      "errors": 0,
+      "counts": {
+        "items": 12,
+        "verdicts_expected": 12,
+        "pages_expected": 12,
+        "citations_total": 66
+      }
+    }
+  ],
+  "by_category": {
+    "build_chart": {
+      "items": 12,
+      "verdict_accuracy_pct": 100.0,
+      "abstained": 0
+    }
+  },
+  "failures_last_run": [],
+  "wall_seconds": 8.9
+}

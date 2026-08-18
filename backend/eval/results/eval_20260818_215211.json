@@ -1,0 +1,160 @@
+{
+  "timestamp": "2026-08-18T21:52:11.473016+00:00",
+  "config": {
+    "synthesis_model": "claude-sonnet-5",
+    "extraction_model": "claude-sonnet-5",
+    "synthesis_effort": "low",
+    "embeddings_backend": "local",
+    "semantic_top_k": 6,
+    "prompt_versions": [
+      "QUERY_PLAN_SYSTEM v1",
+      "SYNTHESIS_SYSTEM v1",
+      "TABLE_EXTRACTION_SYSTEM v1"
+    ],
+    "dataset_items": 4,
+    "runs": 1
+  },
+  "variance": {
+    "retrieval_hit_rate_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "stdev": 0.0
+    },
+    "verdict_accuracy_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "stdev": 0.0
+    },
+    "citation_correctness_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "stdev": 0.0
+    },
+    "refusal_rate_out_of_corpus_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "stdev": 0.0
+    },
+    "over_abstention_rate_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "routing_accuracy_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "hallucinated_citations": {
+      "mean": 0,
+      "min": 0,
+      "max": 0,
+      "stdev": 0.0
+    },
+    "latency_p50_ms": {
+      "mean": 2314,
+      "min": 2314,
+      "max": 2314,
+      "stdev": 0.0
+    },
+    "latency_p95_ms": {
+      "mean": 2544,
+      "min": 2544,
+      "max": 2544,
+      "stdev": 0.0
+    }
+  },
+  "runs": [
+    {
+      "retrieval_hit_rate_pct": 0.0,
+      "verdict_accuracy_pct": 0.0,
+      "citation_correctness_pct": 0.0,
+      "refusal_rate_out_of_corpus_pct": 0.0,
+      "over_abstention_rate_pct": 100.0,
+      "hallucinated_citations": 0,
+      "hallucinated_citation_rate_pct": 0.0,
+      "routing_accuracy_pct": 100.0,
+      "latency_p50_ms": 2314,
+      "latency_p95_ms": 2544,
+      "errors": 0,
+      "counts": {
+        "items": 4,
+        "verdicts_expected": 4,
+        "pages_expected": 4,
+        "citations_total": 0
+      }
+    }
+  ],
+  "by_category": {
+    "build_chart": {
+      "items": 4,
+      "verdict_accuracy_pct": 0.0,
+      "abstained": 4
+    }
+  },
+  "failures_last_run": [
+    {
+      "item_id": "eval_001",
+      "category": "build_chart",
+      "verdict_errors": [
+        "northstar: no claim carrying Preferred Elite = 189 lb"
+      ],
+      "retrieval_misses": [
+        "northstar p3 not retrieved"
+      ],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "build_lookup",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_002",
+      "category": "build_chart",
+      "verdict_errors": [
+        "northstar: no claim carrying Standard Plus = 213 lb"
+      ],
+      "retrieval_misses": [
+        "northstar p3 not retrieved"
+      ],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "build_lookup",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_003",
+      "category": "build_chart",
+      "verdict_errors": [
+        "northstar: no claim carrying Preferred = 163 lb"
+      ],
+      "retrieval_misses": [
+        "northstar p2 not retrieved"
+      ],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "build_lookup",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_004",
+      "category": "build_chart",
+      "verdict_errors": [
+        "cardinal: no claim carrying Select NT = 233 lb"
+      ],
+      "retrieval_misses": [
+        "cardinal p2 not retrieved"
+      ],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "build_lookup",
+      "abstained": true
+    }
+  ],
+  "wall_seconds": 4.1
+}

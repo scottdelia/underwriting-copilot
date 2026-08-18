@@ -150,19 +150,36 @@ def lookup_build_row(
     Returns:
         Entries ordered from best class to worst.
     """
+    # An unspecified sex must not silently match nothing. A carrier that
+    # publishes separate male and female charts stores no rows under "any", so
+    # a query for "any" against a gendered carrier returned an empty row and
+    # the question went unanswered with no indication why. When the sex is
+    # unknown, every published row at that height is returned and labelled, so
+    # the agent sees what the guide actually offers and picks.
+    if gender == "any":
+        wanted = ("male", "female", "any")
+    else:
+        wanted = (gender, "any")
+
+    placeholders = ",".join("?" for _ in wanted)
     with connect(db_path, read_only=True) as conn:
         rows = conn.execute(
-            """
+            f"""
             SELECT carrier_id, doc_id, page, height_inches, rate_class,
                    canonical_class, max_weight_lbs, gender, notes
             FROM build_chart_entries
-            WHERE carrier_id = ? AND height_inches = ? AND gender IN (?, 'any')
-            """,
-            (carrier_id, height_inches, gender),
+            WHERE carrier_id = ? AND height_inches = ?
+              AND gender IN ({placeholders})
+            """,  # noqa: S608 - placeholders only, values are bound
+            (carrier_id, height_inches, *wanted),
         ).fetchall()
 
     entries = [BuildChartEntry(**dict(row)) for row in rows]
-    return sorted(entries, key=lambda e: CANONICAL_ORDER[e.canonical_class])
+    # Sorted by ladder rank first so the best class leads, then by sex so a
+    # gendered chart reads as paired rows rather than an interleaved jumble.
+    return sorted(
+        entries, key=lambda e: (CANONICAL_ORDER[e.canonical_class], e.gender)
+    )
 
 
 def lookup_condition_rules(

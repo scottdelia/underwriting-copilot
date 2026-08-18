@@ -147,7 +147,18 @@ none of it.
 """
 
 # ---------------------------------------------------------------------------
-# SYNTHESIS_SYSTEM  v1  (phase 3)
+# SYNTHESIS_SYSTEM  v2  (phase 4)
+#
+# v2 adds rule 3a. The first eval run abstained on 10 of 10 multi-condition
+# items, and the abstention reasons showed the model was being strictly
+# correct: Northstar's diabetes rule requires oral agents only, diagnosis at
+# 40 or later, and no complications, and an agent describing a prospect
+# confirms none of those. Treating every unconfirmed precondition as
+# disqualifying meant abstaining on essentially every real question.
+#
+# The distinction that fixes it is between a fact needed to *choose* a class
+# and a precondition nobody has *checked* yet. The first is a genuine gap and
+# still abstains; the second is what missing_information exists to carry.
 # ---------------------------------------------------------------------------
 # This is the prompt that decides whether the tool is trustworthy, so each rule
 # is here for a specific failure it prevents:
@@ -190,6 +201,19 @@ expected outcome, not a failure. Abstaining is always better than a plausible \
 guess: an agent who is told the tool does not know will go and check, and an \
 agent who is told the wrong class will submit the application.
 
+3a. Distinguish an unconfirmed precondition from a missing fact. Underwriting \
+rules attach preconditions -- treatment type, age at diagnosis, absence of \
+complications -- that an agent's first description of a prospect will almost \
+never confirm one by one. An unconfirmed precondition is not a failed one. \
+Where the facts you were given are enough to place the applicant in a class, \
+give that class and list every unconfirmed precondition in \
+missing_information, so the agent knows exactly what to verify. Reserve \
+"insufficient_information" for when the guide addresses nothing about this \
+applicant's situation, or when a fact you actually need in order to choose \
+between two classes was not stated. Abstaining because a rule has \
+preconditions nobody has checked yet would mean abstaining on nearly every \
+real question, which helps no one.
+
 4. Build limits and condition limits are evaluated independently, and the worse \
 of the two governs the outcome.
 
@@ -212,6 +236,7 @@ def synthesis_user_prompt(
     carrier_name: str,
     profile_summary: str,
     evidence_block: str,
+    agent_description: str = "",
 ) -> str:
     """Render the user turn for one carrier's synthesis.
 
@@ -223,10 +248,55 @@ def synthesis_user_prompt(
     Returns:
         The rendered prompt.
     """
+    # The agent's own words go in alongside the parsed profile because the
+    # profile is lossy by design: it holds structured fields, and an agent's
+    # clinical detail -- "treated to sustained virologic response, normal liver
+    # enzymes, no fibrosis" -- has no field to live in. Without the raw
+    # description the model saw only the condition name and correctly reported
+    # that treatment status had not been stated, when in fact it had. The eval
+    # surfaced this as an unexplained abstention.
+    #
+    # It is the agent's question, not retrieved document text, so it is labelled
+    # as such and explicitly carries no citation authority.
+    described = (
+        f"The agent's own words:\n{agent_description}\n\n"
+        if agent_description
+        else ""
+    )
     return (
         f"Carrier: {carrier_name}\n\n"
-        f"Applicant as described by the agent:\n{profile_summary}\n\n"
+        f"{described}"
+        f"Applicant details parsed from that description:\n{profile_summary}\n\n"
         f"Evidence from {carrier_name}'s underwriting guide:\n\n"
         f"{evidence_block}\n\n"
-        f"Determine how {carrier_name} would likely classify this applicant."
+        f"Determine how {carrier_name} would likely classify this applicant. "
+        f"The agent's description above states the applicant's situation. It is "
+        f"not guide text and must never be cited."
+    )
+
+
+def query_plan_system_prompt(carriers: dict[str, str]) -> str:
+    """Render the routing prompt with the live carrier roster appended.
+
+    The roster is injected rather than written into the constant because the
+    model was otherwise deriving identifiers from display names: asked about
+    "Northstar Mutual Life" it returned `northstar_mutual_life`, which matches
+    no carrier, so the carrier list resolved to empty and the query returned
+    nothing at all -- no error, no verdicts, no indication anything had gone
+    wrong. Stating the exact identifiers is the fix; `resolve_carrier_ids` in
+    the router is the backstop for when the model improvises anyway.
+
+    Args:
+        carriers: Mapping of carrier id to display name.
+
+    Returns:
+        The rendered system prompt.
+    """
+    roster = "\n".join(f"  {cid} = {name}" for cid, name in carriers.items())
+    return (
+        f"{QUERY_PLAN_SYSTEM}\n"
+        "Name carriers using exactly these identifiers and no others. Leave the "
+        "carrier list empty when the agent named no carrier, which means every "
+        "carrier is in scope. Never derive an identifier from a display name.\n\n"
+        f"{roster}\n"
     )

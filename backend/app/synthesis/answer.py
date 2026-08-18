@@ -173,6 +173,7 @@ async def synthesize_carrier(
     settings: Settings,
     evidence: CarrierEvidence,
     profile: ProspectProfile,
+    query: str = "",
 ) -> tuple[CarrierVerdict, int]:
     """Produce one carrier's verdict from its own evidence alone.
 
@@ -201,6 +202,7 @@ async def synthesize_carrier(
                         carrier_name=evidence.carrier_name,
                         profile_summary=profile_summary(profile),
                         evidence_block=evidence.evidence_text(),
+                        agent_description=query,
                     ),
                 }
             ],
@@ -248,6 +250,20 @@ async def synthesize_carrier(
     return verify_verdict(verdict, evidence)
 
 
+def _evidence_pages(evidence: CarrierEvidence) -> set[int]:
+    """Every page number represented in one carrier's assembled evidence."""
+    pages: set[int] = set()
+    if evidence.build and evidence.build.page:
+        pages.add(evidence.build.page)
+    if evidence.bmi_build and evidence.bmi_build.page:
+        pages.add(evidence.bmi_build.page)
+    pages.update(rule.page for rule in evidence.condition_rules)
+    pages.update(table["page"] for table in evidence.threshold_tables)
+    for hit in evidence.prose:
+        pages.update(range(hit.page_start, hit.page_end + 1))
+    return pages
+
+
 async def compare_carriers(
     client: Any,
     settings: Settings,
@@ -284,7 +300,7 @@ async def compare_carriers(
 
     results = await asyncio.gather(
         *(
-            synthesize_carrier(client, settings, item, plan.profile)
+            synthesize_carrier(client, settings, item, plan.profile, query)
             for item in evidence
         )
     )
@@ -292,12 +308,20 @@ async def compare_carriers(
     verdicts = [verdict for verdict, _ in results]
     dropped = sum(count for _, count in results)
 
+    retrieved_pages = {
+        item.carrier_id: sorted(
+            {p for p in _evidence_pages(item)}
+        )
+        for item in evidence
+    }
+
     return ComparisonResponse(
         query=query,
         query_type=plan.query_type,
         routing_reason=plan.reasoning,
         profile=plan.profile.model_dump(exclude_none=True),
         verdicts=verdicts,
+        retrieved_pages=retrieved_pages,
         unverified_claims_dropped=dropped,
         latency_ms=round((time.perf_counter() - started) * 1000),
         model=settings.synthesis_model,
@@ -345,7 +369,12 @@ def answer_build_lookup(settings: Settings, plan: QueryPlan) -> DirectAnswer:
                     statement=(
                         f"{CARRIER_NAMES[carrier_id]} publishes a maximum of "
                         f"{entry.max_weight_lbs} lb at {feet}'{inches}\" for "
-                        f"{entry.rate_class}."
+                        f"{entry.rate_class}"
+                        + (
+                            f" ({entry.gender})."
+                            if entry.gender != "any"
+                            else " (all applicants)."
+                        )
                     ),
                     citation=Citation(
                         carrier_id=carrier_id,

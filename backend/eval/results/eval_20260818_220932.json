@@ -1,0 +1,224 @@
+{
+  "timestamp": "2026-08-18T22:09:32.634415+00:00",
+  "config": {
+    "synthesis_model": "claude-sonnet-5",
+    "extraction_model": "claude-sonnet-5",
+    "synthesis_effort": "low",
+    "embeddings_backend": "local",
+    "semantic_top_k": 6,
+    "prompt_versions": [
+      "QUERY_PLAN_SYSTEM v1",
+      "SYNTHESIS_SYSTEM v1",
+      "TABLE_EXTRACTION_SYSTEM v1"
+    ],
+    "dataset_items": 10,
+    "runs": 1
+  },
+  "variance": {
+    "retrieval_hit_rate_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "verdict_accuracy_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "stdev": 0.0
+    },
+    "citation_correctness_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "refusal_rate_out_of_corpus_pct": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "stdev": 0.0
+    },
+    "over_abstention_rate_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "routing_accuracy_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0,
+      "stdev": 0.0
+    },
+    "hallucinated_citations": {
+      "mean": 0,
+      "min": 0,
+      "max": 0,
+      "stdev": 0.0
+    },
+    "latency_p50_ms": {
+      "mean": 16852,
+      "min": 16852,
+      "max": 16852,
+      "stdev": 0.0
+    },
+    "latency_p95_ms": {
+      "mean": 18872,
+      "min": 18872,
+      "max": 18872,
+      "stdev": 0.0
+    }
+  },
+  "runs": [
+    {
+      "retrieval_hit_rate_pct": 100.0,
+      "verdict_accuracy_pct": 0.0,
+      "citation_correctness_pct": 100.0,
+      "refusal_rate_out_of_corpus_pct": 0.0,
+      "over_abstention_rate_pct": 100.0,
+      "hallucinated_citations": 0,
+      "hallucinated_citation_rate_pct": 0.0,
+      "routing_accuracy_pct": 100.0,
+      "latency_p50_ms": 16852,
+      "latency_p95_ms": 18872,
+      "errors": 0,
+      "counts": {
+        "items": 10,
+        "verdicts_expected": 10,
+        "pages_expected": 20,
+        "citations_total": 26
+      }
+    }
+  ],
+  "by_category": {
+    "multi_condition": {
+      "items": 10,
+      "verdict_accuracy_pct": 0.0,
+      "abstained": 10
+    }
+  },
+  "failures_last_run": [
+    {
+      "item_id": "eval_025",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "northstar: expected standard, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_026",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "northstar: expected standard_plus, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_027",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "northstar: expected table_rated, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_028",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "cardinal: expected standard_plus, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_029",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "cardinal: expected standard, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_030",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "cardinal: expected table_rated, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_031",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "meridian: expected standard_plus, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_032",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "meridian: expected table_rated, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_033",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "granite: expected standard, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    },
+    {
+      "item_id": "eval_034",
+      "category": "multi_condition",
+      "verdict_errors": [
+        "granite: expected table_rated, got abstained"
+      ],
+      "retrieval_misses": [],
+      "hallucinated": [],
+      "error": null,
+      "routed_as": "prospect_comparison",
+      "abstained": true
+    }
+  ],
+  "wall_seconds": 46.8
+}

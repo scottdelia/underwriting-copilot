@@ -25,6 +25,7 @@ no prompt has to ask the model not to mix them up.
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -43,7 +44,7 @@ from app.retrieval.structured import (
     lookup_threshold_tables,
 )
 from app.security.sanitize import fence_retrieved_content
-from app.synthesis.prompts import QUERY_PLAN_SYSTEM
+from app.synthesis.prompts import query_plan_system_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +66,7 @@ async def plan_query(client: Any, settings: Settings, query: str) -> QueryPlan:
     response = await client.messages.parse(
         model=settings.synthesis_model,
         max_tokens=4000,
-        system=QUERY_PLAN_SYSTEM,
+        system=query_plan_system_prompt(CARRIER_NAMES),
         output_config={"effort": settings.synthesis_effort},
         messages=[{"role": "user", "content": query}],
         output_format=QueryPlan,
@@ -77,10 +78,54 @@ async def plan_query(client: Any, settings: Settings, query: str) -> QueryPlan:
             f"(stop_reason={response.stop_reason})"
         )
 
-    resolved = plan.model_copy(update={"profile": resolve_build(plan.profile)})
+    resolved = plan.model_copy(
+        update={
+            "profile": resolve_build(plan.profile),
+            "carrier_ids": resolve_carrier_ids(plan.carrier_ids),
+        }
+    )
     logger.info(
         "routed as %s: %s", resolved.query_type, resolved.reasoning
     )
+    return resolved
+
+
+def resolve_carrier_ids(raw: list[str]) -> list[str]:
+    """Map whatever the model returned onto real carrier identifiers.
+
+    The prompt states the valid identifiers, and the model still occasionally
+    derives one from a display name. An unresolvable identifier is worse than a
+    wrong one: the carrier list comes back empty and the query returns nothing
+    at all, with no error anywhere.
+
+    Matching is deliberately forgiving -- exact id, then id prefix, then a word
+    from the display name -- because every candidate is checked against a fixed
+    roster of four. There is no input that can resolve to a carrier that does
+    not exist.
+
+    Args:
+        raw: Identifiers as returned by the model.
+
+    Returns:
+        Resolved identifiers, in order, without duplicates. Unresolvable
+        entries are dropped and logged.
+    """
+    resolved: list[str] = []
+    for candidate in raw:
+        key = re.sub(r"[^a-z0-9]+", "", candidate.lower())
+        match = None
+        for carrier_id, name in CARRIER_NAMES.items():
+            normalized_name = re.sub(r"[^a-z0-9]+", "", name.lower())
+            if key == carrier_id or key.startswith(carrier_id) or key == normalized_name:
+                match = carrier_id
+                break
+            if normalized_name.startswith(key) and len(key) >= 4:
+                match = carrier_id
+                break
+        if match is None:
+            logger.warning("could not resolve carrier %r to a known carrier", candidate)
+        elif match not in resolved:
+            resolved.append(match)
     return resolved
 
 
@@ -205,10 +250,31 @@ def gather_carrier_evidence(
     )
     gender = profile.gender or "any"
 
-    def add(block: str) -> None:
-        """Fence a block for the prompt and keep the raw text for verification."""
-        evidence.blocks.append(fence_retrieved_content(block))
-        evidence.sources.append(block)
+    def add(block: str, *, quotable: bool = True) -> None:
+        """Fence a block for the prompt, recording whether it may be quoted.
+
+        Only document text goes into `sources`, which is what citation
+        verification checks against. Computed prose -- a build comparison, a
+        derived BMI ceiling -- is shown to the model but excluded, so a claim
+        that quotes it fails verification and is dropped.
+
+        This split exists because the eval caught the pipeline emitting
+        citations that named a real page and quoted a sentence appearing
+        nowhere in the document. The model was doing what it was told: quote
+        the evidence. The evidence was the problem.
+        """
+        shown = (
+            block
+            if quotable
+            else (
+                "[COMPUTED FROM THE PUBLISHED FIGURES ABOVE. State this in "
+                "your own words and cite the published row it follows from. "
+                "Do not quote this block.]\n" + block
+            )
+        )
+        evidence.blocks.append(fence_retrieved_content(shown))
+        if quotable:
+            evidence.sources.append(block)
 
     # --- Build limits -----------------------------------------------------
     # A height and weight give an exact row. A BMI alone gives only a ceiling
@@ -219,29 +285,27 @@ def gather_carrier_evidence(
         )
         evidence.build = verdict
         row = lookup_build_row(db, carrier_id, profile.height_inches, gender)
-        lines = [
-            "[BUILD CHART LOOKUP - computed from the published chart]",
-            verdict.explanation,
-        ]
         if row:
-            lines.append(
-                f"Full published row at this height (page {row[0].page}):"
+            feet, inches = divmod(profile.height_inches, 12)
+            add(
+                f"[BUILD CHART - published limits at {feet}'{inches}\", "
+                f"{row[0].doc_id} page {row[0].page}]\n"
+                + "\n".join(
+                    f"{e.rate_class}: maximum {e.max_weight_lbs} lb" for e in row
+                )
             )
-            lines += [
-                f"  {e.rate_class}: maximum {e.max_weight_lbs} lb" for e in row
-            ]
-        add("\n".join(lines))
+        add(verdict.explanation, quotable=False)
     elif profile.bmi:
         bmi_verdict = lookup_build_class_by_bmi(db, carrier_id, profile.bmi, gender)
         evidence.bmi_build = bmi_verdict
         add(
-            "[BUILD CHART LOOKUP - derived, no height was stated]\n"
-            + bmi_verdict.derivation
+            bmi_verdict.derivation
             + (
                 f"\nBest class the build allows: {bmi_verdict.carrier_label}"
                 if bmi_verdict.qualifies
                 else "\nThe applicant exceeds every published build limit."
-            )
+            ),
+            quotable=False,
         )
 
     # --- Condition rules --------------------------------------------------
@@ -249,13 +313,26 @@ def gather_carrier_evidence(
     rules = lookup_condition_rules(db, carrier_id, conditions)
     evidence.condition_rules = rules
     for rule in rules:
+        # The criteria and each disqualifier are printed in the guide, so both
+        # are quotable as written. Each disqualifier goes on its own line
+        # because it is printed as its own bullet; joining them with semicolons
+        # produced a sentence that is not in the document and therefore not a
+        # valid thing to quote.
+        disqualifiers = "\n".join(rule.disqualifiers) or "none listed"
         add(
             f"[CONDITION RULE: {rule.condition} - "
             f"{rule.doc_id} page {rule.page}]\n"
             f"{rule.criteria}\n"
-            f"Best available class stated: {rule.best_available_class}\n"
-            f"Disqualifiers: {'; '.join(rule.disqualifiers) or 'none listed'}"
+            f"{disqualifiers}"
         )
+        # The extracted "best available class" field is deliberately NOT shown.
+        # It restates what the criteria prose above already says, and being a
+        # single tidy sentence it was the line the model reached for every
+        # time. Because it is a field rather than printed text, quoting it
+        # failed verification, the claim was dropped, and the verdict collapsed
+        # into an abstention -- over-abstention at 36% in the eval run that
+        # caught this. Removing the redundant phrasing leaves the quotable
+        # criteria as the obvious thing to cite.
 
     # --- Threshold tables -------------------------------------------------
     # Scoped to the pages the matched rules came from. A rule's headline class
@@ -271,7 +348,9 @@ def gather_carrier_evidence(
             " | ".join(table["columns"]),
         ]
         rendered += [" | ".join(row) for row in table["rows"]]
-        rendered += [f"Note: {note}" for note in table["footnotes"]]
+        # Printed with no prefix. A "Note:" prefix makes the line unquotable,
+        # and a table footnote is frequently the load-bearing qualifier.
+        rendered += list(table["footnotes"])
         add("\n".join(rendered))
 
     # --- Prose ------------------------------------------------------------

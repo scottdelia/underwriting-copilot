@@ -26,12 +26,43 @@ Built in phases. This is what currently runs.
 | 1 | App skeleton, security, prose extraction, vector index, `/search` | Done |
 | 2 | Vision-based table extraction, SQLite, rate class normalization | Done |
 | 3 | Prospect parser, retrieval router, synthesis with citations | Done |
-| 4 | 50-item eval dataset and scoring harness | Not started |
+| 4 | 50-item eval dataset and scoring harness | Done |
 | 5 | Frontend | Not started |
 | 6 | Deploy, write-up, demo video | Not started |
 
 `POST /compare` answers the demo scenario end to end in **14.3s**, under the
 15-second target. `/search` remains as a developer-facing retrieval probe.
+
+### Phase 4 evaluation results
+
+50 labelled items, three runs. Mean across runs, with spread:
+
+| Metric | Mean | Min–Max | Stdev |
+|---|---|---|---|
+| Retrieval hit rate | 100% | 100–100 | 0.00 |
+| Verdict accuracy | 91.4% | 89.4–93.9 | 2.32 |
+| Citation correctness | 99.9% | 99.6–100 | 0.24 |
+| Refusal on out-of-corpus | 83.3% | 75–87.5 | 7.22 |
+| Over-abstention (answerable) | 2.4% | 2.4–2.4 | 0.00 |
+| Hallucinated citations | 0.33 | 0–1 | 0.58 |
+| Latency P50 | 10.1s | 9.8–10.4s | 301ms |
+| Latency P95 | 17.8s | 16.2–19.4s | 1585ms |
+
+Per category (last run): build chart 100%, single condition 100%,
+multi-condition 90%, cross-carrier 90.6%.
+
+**Labels are generated, not hand-written, and have not been reviewed.** They
+come from `tools/eval_oracle.py`, which computes outcomes from the published
+thresholds in `tools/carrier_data.py`. The pipeline never reads that file — it
+reads rendered PDFs through classification, vision extraction, an index, and a
+model — so the labels are independent of the system under test. They are *not*
+independent of their author: oracle and prompt were written by the same person
+from the same documents. `backend/eval/REVIEW.md` is the checklist for closing
+that gap.
+
+```bash
+cd backend && python -m eval.run_eval --runs 3
+```
 
 ### The demo scenario
 

@@ -137,6 +137,13 @@ class ComparisonResponse(BaseModel):
         description="A directly-answered result, for build lookups and policy "
         "questions. Null for prospect comparisons.",
     )
+    retrieved_pages: dict[str, list[int]] = Field(
+        default_factory=dict,
+        description="Pages placed in front of the model, per carrier. Exposed "
+        "so retrieval can be scored separately from synthesis: a wrong verdict "
+        "whose supporting page was never retrieved is a retrieval failure, and "
+        "one where it was retrieved and ignored is a synthesis failure.",
+    )
     unverified_claims_dropped: int = Field(
         default=0,
         description="Claims discarded because their quoted excerpt could not "
