@@ -62,6 +62,14 @@ class Settings(BaseSettings):
     corpus_dir: Path = BACKEND_ROOT.parent / "corpus"
     data_dir: Path = BACKEND_ROOT / "data"
 
+    # --- Table extraction (phase 2) ---
+    # 150 DPI puts a Letter page at ~1650px on the long edge, inside the
+    # model's high-resolution band, and keeps 8pt table type legible. Higher
+    # resolutions cost proportionally more image tokens for no measured gain
+    # on this corpus.
+    extraction_dpi: int = 150
+    extraction_max_tokens: int = 8000
+
     # --- Retrieval ---
     semantic_top_k: int = 6
     chunk_target_tokens: int = 600
