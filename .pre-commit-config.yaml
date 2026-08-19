@@ -1,0 +1,18 @@
+# Section 7 of the brief requires a secret scanner in the commit path. The point
+# is not that this repository currently has a leak -- it does not -- but that
+# "no secrets in git history" is a claim that should be enforced by a tool
+# rather than by remembering.
+#
+# Install once:
+#   pip install pre-commit detect-secrets && pre-commit install
+repos:
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        # Findings already reviewed and judged non-secrets live in the baseline.
+        # A hit outside it fails the commit.
+        args: ['--baseline', '.secrets.baseline']
+        # Generated corpus and build output are not source and are gitignored
+        # anyway; excluding them keeps the hook fast.
+        exclude: ^(frontend/dist/|backend/data/|corpus/.*\.pdf$)

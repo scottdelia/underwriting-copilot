@@ -1,5 +1,7 @@
-# Pinned per section 7 of the spec. Regenerate with:
-#   pip install -r requirements.in && pip freeze > requirements.txt
+# Pinned per section 7 of the spec. There is no requirements.in and no
+# compile step: this file is the source of truth and every version here was
+# pinned by hand. To upgrade one, change it here and re-run the test suite and
+# the eval, because a silent retrieval regression will not fail a unit test.
 
 # --- Web framework ---
 fastapi==0.118.0
@@ -25,6 +27,12 @@ pymupdf==1.26.4
 
 # --- Corpus generation (dev-only, used by tools/generate_corpus.py) ---
 reportlab==4.4.4
+
+# --- Security tooling ---
+# Runs in the pre-commit hook (.pre-commit-config.yaml) and over the tracked
+# file set before a push. Section 7 of the spec asks for a scanner rather than
+# a promise.
+detect-secrets==1.5.0
 
 # --- Testing and typing ---
 pytest==8.4.2
