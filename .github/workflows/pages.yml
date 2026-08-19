@@ -1,0 +1,64 @@
+# Builds the static demo bundle and publishes it to GitHub Pages.
+#
+# The published page is built from the committed source on every push, so it
+# cannot drift from the repository the way a hand-uploaded dist/ does. The
+# build is `build:demo`, which sets VITE_DEMO_MODE via frontend/.env.demo and
+# makes the bundle answer from frontend/public/fixtures rather than from a
+# backend -- there is no server behind Pages. See the README's "The published
+# build" section for why the deployed site works that way.
+name: Deploy demo to Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets a deploy be re-run from the Actions tab without an empty commit.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time. Not cancel-in-progress: a half-finished deploy that
+# gets cancelled can leave the live page mid-swap.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Vite 8 requires Node 20.19+ or 22.12+.
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # `ci` rather than `install`: it installs exactly the lockfile and fails
+      # on a mismatch, so a deploy cannot silently ship a different dependency
+      # tree than the one that was tested.
+      - run: npm ci
+        working-directory: frontend
+
+      # Runs `tsc -b` before the build, so a type error fails the deploy
+      # instead of publishing a bundle that was never typechecked.
+      - run: npm run build:demo
+        working-directory: frontend
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
