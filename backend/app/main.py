@@ -95,7 +95,41 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         # Not fatal: /health should be able to report the problem.
         logger.error("index unavailable: %s", exc)
 
+    # One client for the process, not one per request. Each AsyncAnthropic owns
+    # an httpx connection pool; constructing it inside the handler threw the
+    # pool away after every request and paid a fresh TLS handshake on the next
+    # one -- four of them, since the carriers run concurrently.
+    #
+    # PROMPT CACHING IS DELIBERATELY NOT USED HERE, AND THE REASON IS MEASURED
+    # ----------------------------------------------------------------------
+    # The obvious optimisation is a cache_control breakpoint on the synthesis
+    # system prompt, which is static and goes out on four parallel calls per
+    # request. It would do nothing. The minimum cacheable prefix on
+    # claude-sonnet-5 is 1024 tokens; SYNTHESIS_SYSTEM measures ~800 and the
+    # router prompt ~540 (backend/eval/token_counts.md records the run). Below
+    # the minimum a breakpoint is silently inert -- no error, and
+    # cache_creation_input_tokens stays zero.
+    #
+    # Even above the threshold the win here would be smaller than it looks: a
+    # cache entry is only readable once the first response has begun, and the
+    # four carrier calls are issued concurrently, so they would all miss and
+    # all pay the write premium. The saving would come only from repeat queries
+    # inside the TTL.
+    #
+    # Padding the prompt to clear 1024 tokens would be writing text for the
+    # tokenizer rather than for the model, so it is not done.
+    app.state.anthropic = None
+    if settings.anthropic_api_key:
+        import anthropic
+
+        app.state.anthropic = anthropic.AsyncAnthropic(
+            api_key=settings.anthropic_api_key
+        )
+
     yield
+
+    if app.state.anthropic is not None:
+        await app.state.anthropic.close()
 
 
 app = FastAPI(
@@ -276,8 +310,6 @@ async def compare(
         HTTPException: 400 on invalid input, 503 when the model or the index is
             unavailable.
     """
-    import anthropic
-
     try:
         query = sanitize_query(body.query, settings.max_query_chars)
     except InputRejected as exc:
@@ -293,7 +325,18 @@ async def compare(
 
     logger.info("compare %s", redact_query_for_logging(query))
 
-    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+    # Started before routing rather than after it. Routing is a model call on
+    # every path, so a clock started below it would report a number the caller
+    # never experienced. latency_ms is what the request cost, end to end.
+    started = time.perf_counter()
+
+    client = request.app.state.anthropic
+    if client is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Synthesis is not configured.",
+        )
+
     try:
         plan = await plan_query(client, settings, query)
     except Exception as exc:
@@ -306,7 +349,11 @@ async def compare(
     # The routing decision changes the path taken, which is the only reason to
     # have a router. Three of the four types never reach the synthesis model at
     # all: they are answered from the store, from the index, or not at all.
-    started = time.perf_counter()
+    #
+    # "Not at all" is about composition, not about model calls. plan_query has
+    # already run by this point, so every response below reports the routing
+    # model rather than claiming no model was involved.
+    routing_only = f"{settings.synthesis_model} (routing only)"
 
     def direct(answer_obj) -> ComparisonResponse:  # type: ignore[no-untyped-def]
         return ComparisonResponse(
@@ -316,7 +363,7 @@ async def compare(
             profile=plan.profile.model_dump(exclude_none=True),
             answer=answer_obj,
             latency_ms=round((time.perf_counter() - started) * 1000),
-            model="none (answered without a model)",
+            model=routing_only,
         )
 
     # An out-of-scope question is answered by saying so, not by running four
@@ -329,7 +376,7 @@ async def compare(
             routing_reason=plan.reasoning,
             profile={},
             latency_ms=round((time.perf_counter() - started) * 1000),
-            model="none (answered without a model)",
+            model=routing_only,
         )
 
     if plan.query_type == "build_lookup":
@@ -344,4 +391,4 @@ async def compare(
                 detail="Search index is not available.",
             ) from exc
 
-    return await compare_carriers(client, settings, query, plan)
+    return await compare_carriers(client, settings, query, plan, started)

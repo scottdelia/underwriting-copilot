@@ -150,5 +150,14 @@ class ComparisonResponse(BaseModel):
         "be found on the page cited. Surfaced rather than hidden: a non-zero "
         "value here is a fabricated-citation attempt that was caught.",
     )
-    latency_ms: int
-    model: str
+    latency_ms: int = Field(
+        description="Wall-clock time for the whole request, measured from "
+        "before the routing call. Routing is a model call on every path, so a "
+        "figure that excluded it would understate what the caller waited for.",
+    )
+    model: str = Field(
+        description="The model that produced this response. A value suffixed "
+        "'(routing only)' means one call was made to classify the query and "
+        "none to compose the answer: the answer itself was read from the "
+        "structured store or the index and is quoted verbatim.",
+    )

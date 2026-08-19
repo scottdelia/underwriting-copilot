@@ -269,6 +269,7 @@ async def compare_carriers(
     settings: Settings,
     query: str,
     plan: QueryPlan,
+    started: float | None = None,
 ) -> ComparisonResponse:
     """Run the full per-carrier comparison for a parsed query.
 
@@ -281,11 +282,16 @@ async def compare_carriers(
         settings: Application settings.
         query: The sanitized query text.
         plan: The routing plan.
+        started: `perf_counter()` reading from before the routing call, so the
+            reported latency covers the whole request. Routing is itself a model
+            call, and a clock started here would silently omit it. Optional so
+            that a direct caller with no router in front of it still works.
 
     Returns:
         The full comparison, with one verdict per carrier in scope.
     """
-    started = time.perf_counter()
+    if started is None:
+        started = time.perf_counter()
 
     carrier_ids = plan.carrier_ids or list(CARRIER_NAMES)
     unknown = [c for c in carrier_ids if c not in CARRIER_NAMES]
