@@ -54,6 +54,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from app.usage import UsageMeter
 from app.config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
@@ -150,10 +151,26 @@ class ItemResult:
     # Abstention
     should_abstain: bool = False
     did_abstain: bool = False
+    # Usage. An eval that reports latency and accuracy and not a cent is
+    # answering two thirds of the question, and a 50-item sweep at three runs
+    # is roughly 370 model calls -- which nothing in the output used to say.
+    model_calls: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
+    cost_usd: float = 0.0
     # Routing
     routed_as: str | None = None
     routing_correct: bool | None = None
     error: str | None = None
+
+
+def _record_usage(result: ItemResult, meter: UsageMeter) -> None:
+    """Copy a finished item's usage onto its result."""
+    summary = meter.summary()
+    result.model_calls = summary["model_calls"]
+    result.input_tokens = summary["input_tokens"]
+    result.output_tokens = summary["output_tokens"]
+    result.cost_usd = summary["cost_usd"]
 
 
 async def score_item(
@@ -188,9 +205,12 @@ async def score_item(
         should_abstain=not expected["answerable"],
     )
 
+    # One meter per item, covering the routing call and every carrier call.
+    meter = UsageMeter()
+
     started = time.perf_counter()
     try:
-        plan = await plan_query(client, settings, item["question"])
+        plan = await plan_query(client, settings, item["question"], meter)
         result.routed_as = plan.query_type
         if expected.get("query_type"):
             result.routing_correct = plan.query_type == expected["query_type"]
@@ -200,6 +220,7 @@ async def score_item(
             # carrier is consulted and nothing is spent.
             result.did_abstain = True
             result.latency_ms = round((time.perf_counter() - started) * 1000)
+            _record_usage(result, meter)
             return result
 
         if plan.query_type == "build_lookup":
@@ -214,7 +235,7 @@ async def score_item(
             retrieved = {}
         else:
             response = await compare_carriers(
-                client, settings, item["question"], plan
+                client, settings, item["question"], plan, None, meter
             )
             claims = [
                 claim
@@ -226,10 +247,14 @@ async def score_item(
     except Exception as exc:  # pragma: no cover - surfaced in the report
         result.error = str(exc)
         result.latency_ms = round((time.perf_counter() - started) * 1000)
+        # Recorded even on failure: a call that errored after the model
+        # answered still cost money.
+        _record_usage(result, meter)
         logger.exception("item %s failed", item["id"])
         return result
 
     result.latency_ms = round((time.perf_counter() - started) * 1000)
+    _record_usage(result, meter)
 
     # --- Abstention -------------------------------------------------------
     # An answerable item counts as abstaining only if every carrier abstained.
@@ -371,6 +396,12 @@ def summarize(results: list[ItemResult]) -> dict[str, Any]:
         "routing_accuracy_pct": pct(
             sum(1 for r in routed if r.routing_correct), len(routed)
         ),
+        # Totals, not means: the question a reader has is what the sweep cost,
+        # not what an average item cost.
+        "model_calls_total": sum(r.model_calls for r in results),
+        "input_tokens_total": sum(r.input_tokens for r in results),
+        "output_tokens_total": sum(r.output_tokens for r in results),
+        "cost_usd_total": round(sum(r.cost_usd for r in results), 4),
         "latency_p50_ms": round(statistics.median(latencies)) if latencies else 0,
         "latency_p95_ms": (
             round(sorted(latencies)[max(0, int(len(latencies) * 0.95) - 1)])

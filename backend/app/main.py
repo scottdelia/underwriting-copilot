@@ -40,6 +40,7 @@ from app.synthesis.answer import (
 from app.retrieval.router import plan_query
 from app.retrieval.semantic import IndexNotBuiltError, get_index
 from app.security.auth import verify_shared_secret
+from app.usage import UsageMeter
 from app.security.sanitize import (
     InputRejected,
     redact_query_for_logging,
@@ -330,6 +331,10 @@ async def compare(
     # never experienced. latency_ms is what the request cost, end to end.
     started = time.perf_counter()
 
+    # One meter per request. Every model call on every path adds to it, so the
+    # figure returned is what this request actually consumed.
+    meter = UsageMeter()
+
     client = request.app.state.anthropic
     if client is None:
         raise HTTPException(
@@ -338,7 +343,7 @@ async def compare(
         )
 
     try:
-        plan = await plan_query(client, settings, query)
+        plan = await plan_query(client, settings, query, meter)
     except Exception as exc:
         logger.exception("query planning failed")
         raise HTTPException(
@@ -364,6 +369,7 @@ async def compare(
             answer=answer_obj,
             latency_ms=round((time.perf_counter() - started) * 1000),
             model=routing_only,
+            usage=meter.summary(),
         )
 
     # An out-of-scope question is answered by saying so, not by running four
@@ -377,6 +383,7 @@ async def compare(
             profile={},
             latency_ms=round((time.perf_counter() - started) * 1000),
             model=routing_only,
+            usage=meter.summary(),
         )
 
     if plan.query_type == "build_lookup":
@@ -391,4 +398,4 @@ async def compare(
                 detail="Search index is not available.",
             ) from exc
 
-    return await compare_carriers(client, settings, query, plan, started)
+    return await compare_carriers(client, settings, query, plan, started, meter)

@@ -174,6 +174,7 @@ async def synthesize_carrier(
     evidence: CarrierEvidence,
     profile: ProspectProfile,
     query: str = "",
+    meter: Any = None,
 ) -> tuple[CarrierVerdict, int]:
     """Produce one carrier's verdict from its own evidence alone.
 
@@ -208,6 +209,8 @@ async def synthesize_carrier(
             ],
             output_format=CarrierVerdict,
         )
+        if meter is not None:
+            meter.record(evidence.carrier_id, settings.synthesis_model, response.usage)
     except Exception as exc:
         # A carrier that errors abstains rather than failing the whole
         # comparison. Three verdicts and one honest gap beats no answer.
@@ -270,6 +273,7 @@ async def compare_carriers(
     query: str,
     plan: QueryPlan,
     started: float | None = None,
+    meter: Any = None,
 ) -> ComparisonResponse:
     """Run the full per-carrier comparison for a parsed query.
 
@@ -306,7 +310,7 @@ async def compare_carriers(
 
     results = await asyncio.gather(
         *(
-            synthesize_carrier(client, settings, item, plan.profile, query)
+            synthesize_carrier(client, settings, item, plan.profile, query, meter)
             for item in evidence
         )
     )
@@ -331,6 +335,7 @@ async def compare_carriers(
         unverified_claims_dropped=dropped,
         latency_ms=round((time.perf_counter() - started) * 1000),
         model=settings.synthesis_model,
+        usage=meter.summary() if meter is not None else None,
     )
 
 

@@ -49,7 +49,9 @@ from app.synthesis.prompts import query_plan_system_prompt
 logger = logging.getLogger(__name__)
 
 
-async def plan_query(client: Any, settings: Settings, query: str) -> QueryPlan:
+async def plan_query(
+    client: Any, settings: Settings, query: str, meter: Any = None
+) -> QueryPlan:
     """Classify a query and extract any prospect it describes.
 
     Args:
@@ -71,6 +73,12 @@ async def plan_query(client: Any, settings: Settings, query: str) -> QueryPlan:
         messages=[{"role": "user", "content": query}],
         output_format=QueryPlan,
     )
+    # Every request pays for this call, on every path. Recording it is the
+    # difference between a reported cost and a guess -- and it is the call that
+    # makes "the tool answered without a model" untrue.
+    if meter is not None:
+        meter.record("routing", settings.synthesis_model, response.usage)
+
     plan: QueryPlan | None = response.parsed_output
     if plan is None:
         raise RuntimeError(

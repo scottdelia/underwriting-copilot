@@ -29,9 +29,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           # Vite 8 requires Node 20.19+ or 22.12+.
           node-version: '22'
@@ -49,7 +49,7 @@ jobs:
       - run: npm run build:demo
         working-directory: frontend
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: frontend/dist
 

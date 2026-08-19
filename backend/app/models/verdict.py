@@ -155,6 +155,13 @@ class ComparisonResponse(BaseModel):
         "before the routing call. Routing is a model call on every path, so a "
         "figure that excluded it would understate what the caller waited for.",
     )
+    usage: dict | None = Field(
+        default=None,
+        description="Token usage and list-rate cost for this request, including "
+        "the routing call. Surfaced because per-query cost is the number a "
+        "business case turns on, and this project measured the ingestion path "
+        "instead for longer than it should have.",
+    )
     model: str = Field(
         description="The model that produced this response. A value suffixed "
         "'(routing only)' means one call was made to classify the query and "
