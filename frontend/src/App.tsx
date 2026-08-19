@@ -16,12 +16,13 @@ import {
 import exampleQueries from './api/exampleQueries.json';
 import { Disclaimer } from './components/Disclaimer';
 import { ResultView } from './components/ResultView';
+import { ThemeToggle } from './components/ThemeToggle';
 
 /**
  * The whole application: one page, one input, one answer.
  *
- * No router and no chat history, both of which the brief puts out of scope.
- * The absence of history is not only scope discipline — a stored transcript of
+ * No router and no chat history, both of which the brief puts out of scope. The
+ * absence of history is not only scope discipline — a stored transcript of
  * these queries would be a file of named people's medical details, which is not
  * something a demo should accumulate.
  */
@@ -31,15 +32,49 @@ import { ResultView } from './components/ResultView';
  *
  * Imported rather than written here because tools/capture_fixtures.py reads the
  * same file: the published build looks recordings up by hashing the query, so
- * an example button whose text differs from the captured query by one
- * character silently stops working. It differed by one character ("5'6" versus
- * "5'06"") until this was made a single source.
+ * an example button whose text differs from the captured query by one character
+ * silently stops working. It differed by one character ("5'6" versus "5'06")
+ * until this was made a single source.
  *
  * The last entry is out of scope on purpose. A demo that only seeds queries the
  * tool can answer hides the behaviour that matters most in a regulated context,
  * which is what it does when it cannot answer.
  */
 const EXAMPLES: string[] = exampleQueries;
+
+/** The mark from the favicon: four carriers, ranked, in ladder colours. */
+function Mark() {
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden className="size-8 shrink-0">
+      <rect width="32" height="32" rx="8" fill="var(--ink)" />
+      <rect
+        x="7"
+        y="8"
+        width="18"
+        height="3.5"
+        rx="1.75"
+        fill="var(--tier-preferred-plus)"
+      />
+      <rect
+        x="7"
+        y="14"
+        width="13"
+        height="3.5"
+        rx="1.75"
+        fill="var(--tier-standard-plus)"
+      />
+      <rect
+        x="7"
+        y="20"
+        width="15"
+        height="3.5"
+        rx="1.75"
+        fill="var(--surface)"
+        opacity="0.85"
+      />
+    </svg>
+  );
+}
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -87,8 +122,8 @@ export default function App() {
         setDemoMiss(caught.available);
       } else if (caught instanceof InputRejectedError) {
         // The backend's own explanation, shown verbatim. It knows why it
-        // refused; paraphrasing it into "something went wrong" would throw
-        // away the only actionable part of the failure.
+        // refused; paraphrasing it into "something went wrong" would throw away
+        // the only actionable part of the failure.
         setError(caught.message);
       } else {
         setError(
@@ -104,48 +139,68 @@ export default function App() {
   }
 
   const indexDown = health !== null && !health.index_ready;
+  const idle = !result && !loading && !error && !demoMiss;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-surface-sunken">
       <Disclaimer />
 
-      <main className="mx-auto max-w-6xl px-4 py-8">
-        <header className="mb-6">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            Underwriting Copilot
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Describe a prospect in plain language. Get likely rate classes
-            across carriers, with the guideline text behind each answer.
-          </p>
-        </header>
+      <header className="border-b border-line bg-surface">
+        <div className="mx-auto flex max-w-[76rem] items-center justify-between gap-4 px-5 py-3">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <Mark />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold tracking-tight text-ink">
+                Underwriting Copilot
+              </p>
+              <p className="truncate text-xs text-ink-subtle">
+                Cross-carrier rate class comparison
+              </p>
+            </div>
+          </div>
+          <ThemeToggle />
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-[76rem] px-5 pb-20 pt-8">
+        {/* The hero only appears before an answer. Once there is a result the
+            reader is here to read it, and a restated pitch above it is just
+            distance between them and the thing they asked for. */}
+        {idle && (
+          <div className="mb-7 max-w-2xl">
+            <h1 className="text-display font-semibold text-ink">
+              Which carrier writes this case?
+            </h1>
+            <p className="mt-3 text-lead text-ink-muted">
+              Describe a prospect in plain language. Get the likely rate class
+              from every carrier, ranked, each one carrying the guideline text
+              it rests on and the page it came from.
+            </p>
+          </div>
+        )}
 
         {DEMO_MODE && (
-          <div
-            role="note"
-            className="mb-6 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900"
-          >
+          <div className="note note-info mb-4">
             <p>
-              <span className="font-medium">Recorded responses.</span> This
-              published build has no server behind it. Each answer below is a
-              real response from the pipeline, captured from a live run — the
-              rate classes, the quoted guideline text, the page citations, and
-              the count of claims dropped in verification are all that run&rsquo;s
-              own output, and the timing shown is the time that run actually
-              took.
+              <span className="font-semibold">Recorded responses.</span> This
+              published build has no server behind it. Every answer is a real
+              response from the pipeline captured from a live run — the rate
+              classes, the quoted guideline text, the page citations, and the
+              count of claims dropped in verification are all that run&rsquo;s
+              own output, and the timing shown is what that run actually took.
             </p>
-            <p className="mt-2">
-              What a recording cannot do is answer a query nobody ran. Use one
-              of the examples below, or clone the repository and run it against
-              the live backend to type your own.
+            <p className="mt-1.5 opacity-90">
+              What a recording cannot do is answer a query nobody ran. Use an
+              example below, or clone the repository and run it against the live
+              backend to type your own.
             </p>
           </div>
         )}
 
         {indexDown && (
-          <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+          <div className="note note-danger mb-4">
             The search index is not built, so no query can be answered. Run{' '}
-            <code className="rounded bg-rose-100 px-1">
+            <code className="rounded bg-surface-inset px-1.5 py-0.5 font-mono text-[0.8125rem]">
               python -m app.ingest.build_index
             </code>
             .
@@ -154,7 +209,7 @@ export default function App() {
 
         {needsSecret && (
           <form
-            className="mb-4 rounded-lg border border-slate-300 bg-white p-4"
+            className="card mb-4 p-5"
             onSubmit={(event) => {
               event.preventDefault();
               if (!secret.trim()) return;
@@ -166,26 +221,26 @@ export default function App() {
           >
             <label
               htmlFor="secret"
-              className="block text-sm font-medium text-slate-900"
+              className="block text-sm font-semibold text-ink"
             >
               This demo is password protected
             </label>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-ink-subtle">
               It calls a paid API, so it is not left open. The password is held
               in memory only and is not stored.
             </p>
-            <div className="mt-2 flex gap-2">
+            <div className="mt-3 flex gap-2">
               <input
                 id="secret"
                 type="password"
                 value={secret}
                 onChange={(event) => setSecret(event.target.value)}
-                className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+                className="flex-1 rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-ink outline-none transition-colors focus:border-accent"
                 autoComplete="current-password"
               />
               <button
                 type="submit"
-                className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+                className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-surface transition-opacity hover:opacity-90"
               >
                 Unlock
               </button>
@@ -198,6 +253,7 @@ export default function App() {
             event.preventDefault();
             void run(query);
           }}
+          className="card overflow-hidden focus-within:border-accent"
         >
           <label htmlFor="query" className="sr-only">
             Describe a prospect
@@ -208,37 +264,42 @@ export default function App() {
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
               // Enter submits; Shift+Enter adds a line. A description is
-              // usually one line, so requiring a click to submit would add a
-              // step to every single query.
+              // usually one line, so requiring a click would add a step to
+              // every single query.
               if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 void run(query);
               }
             }}
-            rows={3}
+            rows={2}
             placeholder="55 year old male, A1c 7.1 on metformin, BMI 31, non-smoker, $500K 20-year term"
-            className="w-full resize-y rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:outline-none"
+            className="w-full resize-y bg-transparent px-5 pb-3 pt-4 text-[0.9375rem] leading-relaxed text-ink outline-none placeholder:text-ink-faint"
           />
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs text-slate-400">
-              Enter to submit &middot; Shift+Enter for a new line
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-surface-inset px-5 py-2.5">
+            <p className="text-xs text-ink-faint">
+              <kbd className="font-sans font-medium text-ink-subtle">Enter</kbd>{' '}
+              to submit ·{' '}
+              <kbd className="font-sans font-medium text-ink-subtle">
+                Shift+Enter
+              </kbd>{' '}
+              for a new line
             </p>
             <button
               type="submit"
               disabled={loading || !query.trim()}
-              className="rounded-md bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+              className="rounded-lg bg-accent px-5 py-2 text-sm font-semibold text-accent-ink transition-all hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {loading ? 'Checking guides…' : 'Compare carriers'}
+              {loading ? 'Reading guides…' : 'Compare carriers'}
             </button>
           </div>
         </form>
 
-        {!result && !loading && !error && !demoMiss && (
-          <div className="mt-6">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-              Try
+        {idle && (
+          <div className="mt-5">
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-ink-faint">
+              Try one
             </p>
-            <div className="mt-2 flex flex-col gap-2">
+            <div className="mt-2.5 flex flex-col gap-2">
               {EXAMPLES.map((example) => (
                 <button
                   key={example}
@@ -247,9 +308,15 @@ export default function App() {
                     setQuery(example);
                     void run(example);
                   }}
-                  className="rounded-md border border-slate-200 bg-white px-3 py-2 text-left text-sm text-slate-700 hover:border-slate-400"
+                  className="group flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-2.5 text-left text-sm text-ink-muted transition-colors hover:border-line-strong hover:bg-surface-inset"
                 >
-                  {example}
+                  <span
+                    aria-hidden
+                    className="text-ink-faint transition-colors group-hover:text-accent"
+                  >
+                    →
+                  </span>
+                  <span className="min-w-0 flex-1">{example}</span>
                 </button>
               ))}
             </div>
@@ -257,39 +324,43 @@ export default function App() {
         )}
 
         {loading && (
-          <div className="mt-6 space-y-3" aria-live="polite">
-            <p className="text-sm text-slate-500">
+          <div className="mt-5" aria-live="polite">
+            <p className="text-sm text-ink-subtle">
               Reading each carrier&rsquo;s guide…
             </p>
             {/* A skeleton rather than a spinner: four carriers are queried in
                 parallel and the shape of the answer is known in advance, so
                 showing that shape sets the right expectation for a wait that
-                runs to ten seconds or more. */}
-            <div className="grid gap-3 md:grid-cols-2">
+                runs to ten seconds or more. It mirrors the ranked rows exactly
+                so nothing jumps when the answer lands. */}
+            <div className="card mt-3 overflow-hidden">
               {[0, 1, 2, 3].map((index) => (
                 <div
                   key={index}
-                  className="h-28 animate-pulse rounded-lg border border-slate-200 bg-white"
-                />
+                  className="flex animate-pulse items-center gap-4 border-b border-line px-5 py-4 last:border-b-0"
+                  style={{ animationDelay: `${index * 90}ms` }}
+                >
+                  <div className="size-4 rounded bg-line" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-2.5 w-28 rounded bg-line" />
+                    <div className="h-4 w-40 rounded bg-line" />
+                  </div>
+                  <div className="h-6 w-28 rounded-full bg-line" />
+                </div>
               ))}
             </div>
           </div>
         )}
 
         {demoMiss && (
-          <div
-            role="status"
-            className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
-          >
-            <p className="font-medium">
-              No recording for that query.
-            </p>
+          <div role="status" className="note note-warn mt-5">
+            <p className="font-semibold">No recording for that query.</p>
             <p className="mt-1">
               This published build answers from responses captured in advance,
               so it can only answer the queries that were run. These are the
               ones it has:
             </p>
-            <ul className="mt-2 space-y-1">
+            <ul className="mt-3 space-y-1.5">
               {demoMiss.map((available) => (
                 <li key={available}>
                   <button
@@ -298,9 +369,12 @@ export default function App() {
                       setQuery(available);
                       void run(available);
                     }}
-                    className="text-left underline decoration-amber-400 underline-offset-2 hover:text-amber-950"
+                    className="flex gap-2 text-left underline decoration-current/40 underline-offset-[3px] transition-colors hover:decoration-current"
                   >
-                    {available}
+                    <span aria-hidden className="opacity-60">
+                      →
+                    </span>
+                    <span>{available}</span>
                   </button>
                 </li>
               ))}
@@ -309,29 +383,30 @@ export default function App() {
         )}
 
         {error && (
-          <div
-            role="alert"
-            className="mt-6 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900"
-          >
+          <div role="alert" className="note note-danger mt-5">
             {error}
           </div>
         )}
 
         {result && !loading && (
-          <div className="mt-6">
+          <div className="mt-5">
             <ResultView result={result} />
           </div>
         )}
 
-        <footer className="mt-12 border-t border-slate-200 pt-4 text-xs text-slate-400">
-          {health && (
-            <p>
-              {health.chunk_count} indexed passages across{' '}
-              {health.carriers.length} fictional carriers.
-              {hasSharedSecret() && ' Session unlocked.'}
-            </p>
-          )}
-          <p className="mt-1">
+        <footer className="mt-16 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-line pt-5 text-xs text-ink-faint">
+          <p>
+            {health && (
+              <>
+                <span className="tabular">{health.chunk_count}</span> indexed
+                passages across{' '}
+                <span className="tabular">{health.carriers.length}</span>{' '}
+                fictional carriers.
+                {hasSharedSecret() && ' Session unlocked.'}
+              </>
+            )}
+          </p>
+          <p>
             A portfolio demonstration. Not for underwriting, sales, or advisory
             use.
           </p>

@@ -1,1 +1,360 @@
 @import "tailwindcss";
+
+/* Inter, self-hosted rather than pulled from a CDN. A font request to a third
+   party on page load carries the reader's IP to someone who did not need it,
+   and this page is about being careful with data. Variable weight, so one file
+   covers the whole scale. */
+@import "@fontsource-variable/inter";
+
+/* ---------------------------------------------------------------------------
+   DESIGN TOKENS
+
+   Every colour, size, and radius the interface uses is declared here and
+   nowhere else. Two reasons that indirection earns its keep.
+
+   Theming: utilities compile to `var(--color-x)` through `@theme inline`, so
+   redefining a variable under a dark-mode selector re-themes the entire
+   application without a single `dark:` class in a component.
+
+   Reuse: this block is meant to be lifted. The portfolio shell and the two
+   applications after it inherit it verbatim, so the three read as one body of
+   work rather than three projects that happen to share an author.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  /* Ink. Four steps, because three was never enough to separate a heading from
+     a label from a caption without reaching for opacity. */
+  --ink: #0b1220;
+  --ink-muted: #334155;
+  --ink-subtle: #64748b;
+  --ink-faint: #94a3b8;
+
+  /* Surfaces. `sunken` is the page; `raised` is a card sitting on it. */
+  --surface-sunken: #f6f8fb;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-inset: #f8fafc;
+
+  --line: #e6ebf2;
+  --line-strong: #cfd8e3;
+
+  /* One accent, used sparingly. A second would force every element to answer
+     "which one am I", and almost none of them have a reason. */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-ink: #ffffff;
+  --accent-soft: #eff6ff;
+
+  /* The rate-class ladder, best to worst. One hue per tier; backgrounds and
+     borders are mixed from it at render time, so a tier is one number to
+     change rather than three shades that drift apart. */
+  --tier-preferred-plus: #059669;
+  --tier-preferred: #10b981;
+  --tier-standard-plus: #0284c7;
+  --tier-standard: #64748b;
+  --tier-table-rated: #d97706;
+  --tier-decline: #e11d48;
+  /* An abstention is not a bad outcome, so it does not get a bad colour. */
+  --tier-none: #94a3b8;
+
+  /* Advisory states. */
+  --warn: #b45309;
+  --warn-soft: #fffbeb;
+  --warn-line: #fde68a;
+  --danger: #be123c;
+  --danger-soft: #fff1f2;
+  --danger-line: #fecdd3;
+  --info: #0369a1;
+  --info-soft: #f0f9ff;
+  --info-line: #bae6fd;
+
+  --shadow-card: 0 1px 2px rgb(11 18 32 / 0.04), 0 1px 3px rgb(11 18 32 / 0.03);
+  --shadow-raised: 0 4px 12px rgb(11 18 32 / 0.06),
+    0 1px 3px rgb(11 18 32 / 0.04);
+}
+
+/* Dark values, applied by system preference and by explicit choice. The
+   `:not([data-theme="light"])` guard is what lets the toggle override the
+   system rather than fight it. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --ink: #eef2f8;
+    --ink-muted: #b6c2d4;
+    --ink-subtle: #8b9ab1;
+    --ink-faint: #64748b;
+
+    --surface-sunken: #080b12;
+    --surface: #0f1520;
+    --surface-raised: #141c2a;
+    --surface-inset: #111826;
+
+    --line: #1f2937;
+    --line-strong: #334155;
+
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --accent-ink: #0b1220;
+    --accent-soft: #142132;
+
+    --tier-preferred-plus: #34d399;
+    --tier-preferred: #6ee7b7;
+    --tier-standard-plus: #56b6f0;
+    --tier-standard: #94a3b8;
+    --tier-table-rated: #fbbf24;
+    --tier-decline: #fb7185;
+    --tier-none: #64748b;
+
+    --warn: #fbbf24;
+    --warn-soft: #211a08;
+    --warn-line: #3f2f0c;
+    --danger: #fb7185;
+    --danger-soft: #24101a;
+    --danger-line: #4c1d28;
+    --info: #7dd3fc;
+    --info-soft: #0b1b28;
+    --info-line: #14324a;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-raised: 0 8px 24px rgb(0 0 0 / 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #eef2f8;
+  --ink-muted: #b6c2d4;
+  --ink-subtle: #8b9ab1;
+  --ink-faint: #64748b;
+
+  --surface-sunken: #080b12;
+  --surface: #0f1520;
+  --surface-raised: #141c2a;
+  --surface-inset: #111826;
+
+  --line: #1f2937;
+  --line-strong: #334155;
+
+  --accent: #60a5fa;
+  --accent-hover: #93c5fd;
+  --accent-ink: #0b1220;
+  --accent-soft: #142132;
+
+  --tier-preferred-plus: #34d399;
+  --tier-preferred: #6ee7b7;
+  --tier-standard-plus: #56b6f0;
+  --tier-standard: #94a3b8;
+  --tier-table-rated: #fbbf24;
+  --tier-decline: #fb7185;
+  --tier-none: #64748b;
+
+  --warn: #fbbf24;
+  --warn-soft: #211a08;
+  --warn-line: #3f2f0c;
+  --danger: #fb7185;
+  --danger-soft: #24101a;
+  --danger-line: #4c1d28;
+  --info: #7dd3fc;
+  --info-soft: #0b1b28;
+  --info-line: #14324a;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-raised: 0 8px 24px rgb(0 0 0 / 0.45);
+}
+
+/* `inline` matters here: it makes the generated utilities reference the
+   variables instead of baking their values in, which is what allows the dark
+   blocks above to re-theme utilities that were compiled once. */
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-faint: var(--ink-faint);
+
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-inset: var(--surface-inset);
+
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-warn-line: var(--warn-line);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-line: var(--danger-line);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-info-line: var(--info-line);
+
+  /* A real scale, rather than three sizes a few pixels apart. */
+  --text-display: 2.25rem;
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.03em;
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.022em;
+  --text-offer: 1.3125rem;
+  --text-offer--line-height: 1.2;
+  --text-offer--letter-spacing: -0.018em;
+  --text-lead: 1.0625rem;
+  --text-lead--line-height: 1.6;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+}
+
+/* Most dark-mode work is done by the tokens above, but a few places still have
+   to branch (an inverted control, a different mix ratio). This variant covers
+   both the explicit attribute and the system preference. */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+  &:where(:root[data-theme="dark"], :root[data-theme="dark"] *) {
+    @slot;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--surface-sunken);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Every figure that sits in a column or gets compared to another figure.
+     Proportional digits make a column of weights look ragged. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* One focus treatment everywhere, visible against both themes. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 0.375rem;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 24%, transparent);
+  }
+}
+
+@layer components {
+  /* A tier chip. The element sets `--tier` inline and this derives background,
+     text, and border from it, so adding a rate class means one variable rather
+     than three hand-picked shades. */
+  .tier-chip {
+    --tier: var(--tier-none);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in oklab, var(--tier) 34%, transparent);
+    background: color-mix(in oklab, var(--tier) 13%, var(--surface));
+    color: color-mix(in oklab, var(--tier) 66%, var(--ink));
+    padding: 0.1875rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 550;
+    line-height: 1.45;
+    white-space: nowrap;
+  }
+
+  /* Carries the tier hue at full strength. Small enough that full chroma reads
+     as a signal rather than as decoration. */
+  .tier-dot {
+    --tier: var(--tier-none);
+    display: inline-block;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 9999px;
+    background: var(--tier);
+    flex: none;
+  }
+
+  /* The rail down the left of an expanded row, tinted to its tier so evidence
+     stays visually attached to the verdict it supports. */
+  .tier-rail {
+    --tier: var(--tier-none);
+    box-shadow: inset 2px 0 0 0 color-mix(in oklab, var(--tier) 42%, transparent);
+  }
+
+  .card {
+    background: var(--surface-raised);
+    border: 1px solid var(--line);
+    border-radius: 0.875rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Advisory panels: one shape, three intents. */
+  .note {
+    border-radius: 0.75rem;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+  .note-info {
+    background: var(--info-soft);
+    border-color: var(--info-line);
+    color: color-mix(in oklab, var(--info) 78%, var(--ink));
+  }
+  .note-warn {
+    background: var(--warn-soft);
+    border-color: var(--warn-line);
+    color: color-mix(in oklab, var(--warn) 78%, var(--ink));
+  }
+  .note-danger {
+    background: var(--danger-soft);
+    border-color: var(--danger-line);
+    color: color-mix(in oklab, var(--danger) 78%, var(--ink));
+  }
+
+  /* Quoted guideline text. This is the load-bearing element of the whole
+     interface -- it is the evidence -- so it gets a deliberate treatment rather
+     than inheriting a generic blockquote. */
+  .excerpt {
+    background: var(--surface-inset);
+    border-left: 2px solid var(--line-strong);
+    border-radius: 0 0.375rem 0.375rem 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    color: var(--ink-muted);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

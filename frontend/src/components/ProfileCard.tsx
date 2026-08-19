@@ -4,15 +4,20 @@ import type { ProspectProfile } from '../api/types';
  * Shows the agent what the tool understood, before they trust what it concluded.
  *
  * The brief asks for the parsed profile to be "shown back for confirmation",
- * and the reason is worth being explicit about: everything downstream —
- * which build chart row is read, which condition rules are retrieved, which
- * verdict is reached — follows from this parse. If the tool heard "A1c 7.1" as
- * "age 71", every carrier verdict below is confidently wrong and nothing else
- * on the page reveals it.
+ * and the reason is worth being explicit about: everything downstream — which
+ * build chart row is read, which condition rules are retrieved, which verdict
+ * is reached — follows from this parse. If the tool heard "A1c 7.1" as "age
+ * 71", every carrier verdict below is confidently wrong and nothing else on the
+ * page reveals it.
  *
  * Fields the agent did not state are listed explicitly rather than omitted. An
  * absent field reads as "not applicable"; a field labelled *not stated* reads
  * as "you did not tell me, and it may matter", which is the true position.
+ *
+ * Presentation note: the fields were a wrapped inline run in which a long value
+ * ran into the next field's label. Each field is now its own cell with the
+ * label above the value, so the parse can be checked by scanning rather than by
+ * parsing the parse.
  */
 
 const FIELD_LABELS: Record<string, string> = {
@@ -48,6 +53,13 @@ function formatValue(key: string, value: unknown): string {
   return String(value);
 }
 
+/** Values that are figures get tabular digits so columns line up. */
+function isNumeric(key: string): boolean {
+  return ['age', 'bmi', 'a1c', 'weight_lbs', 'coverage_amount_usd'].includes(
+    key,
+  );
+}
+
 export function ProfileCard({ profile }: { profile: ProspectProfile }) {
   const entries = Object.entries(profile).filter(
     ([, value]) =>
@@ -63,22 +75,35 @@ export function ProfileCard({ profile }: { profile: ProspectProfile }) {
   if (entries.length === 0 && missing.length === 0) return null;
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4">
-      <h2 className="text-sm font-semibold text-slate-900">
-        What the tool understood
-      </h2>
-      <p className="mt-1 text-xs text-slate-500">
-        Everything below is derived from this. Check it before trusting the
-        verdicts.
-      </p>
+    <section className="card overflow-hidden">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line px-5 py-3.5">
+        <h2 className="text-sm font-semibold text-ink">
+          What the tool understood
+        </h2>
+        <p className="text-xs text-ink-subtle">
+          Everything below is derived from this — check it before trusting the
+          verdicts.
+        </p>
+      </div>
 
-      <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+      {/* Flex rather than a fixed grid. A grid with a spanning cell leaves an
+          empty slot wherever the span does not divide evenly, and an empty cell
+          renders as a stray block of the gap colour. Here the last row simply
+          grows to fill. */}
+      <dl className="flex flex-wrap">
         {entries.map(([key, value]) => (
-          <div key={key} className="flex items-baseline gap-2">
-            <dt className="text-xs uppercase tracking-wide text-slate-400">
+          <div
+            key={key}
+            className="grow basis-[9.5rem] border-b border-r border-line px-5 py-3 last:border-r-0"
+          >
+            <dt className="text-[0.6875rem] font-medium uppercase tracking-[0.06em] text-ink-faint">
               {FIELD_LABELS[key] ?? key}
             </dt>
-            <dd className="text-sm font-medium text-slate-900">
+            <dd
+              className={`mt-1 text-sm font-medium text-ink ${
+                isNumeric(key) ? 'tabular' : ''
+              }`}
+            >
               {formatValue(key, value)}
             </dd>
           </div>
@@ -86,8 +111,8 @@ export function ProfileCard({ profile }: { profile: ProspectProfile }) {
       </dl>
 
       {missing.length > 0 && (
-        <p className="mt-3 border-t border-slate-100 pt-3 text-xs text-slate-500">
-          <span className="font-medium text-slate-600">Not stated:</span>{' '}
+        <p className="border-t border-line bg-surface-inset px-5 py-3 text-xs text-ink-subtle">
+          <span className="font-semibold text-ink-muted">Not stated:</span>{' '}
           {missing.map((key) => FIELD_LABELS[key] ?? key).join(', ')}. These can
           change a classification.
         </p>

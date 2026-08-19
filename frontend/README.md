@@ -53,10 +53,26 @@ src/
 
 ## Conventions worth knowing before editing
 
-- **No UI library, no icon library, no chart library.** React, Tailwind v4, and
-  nothing else. Tailwind is wired through `@tailwindcss/vite`, not PostCSS, and
-  `index.css` is a single `@import "tailwindcss"` with no `@theme` block. Colours
-  are stock Tailwind classes written inline.
+- **No UI library, no icon library, no chart library.** React and Tailwind v4.
+  The only other runtime dependency is `@fontsource-variable/inter`, which is a
+  typeface rather than a component kit — self-hosted so the page makes no
+  request to a third party on load. The handful of icons are inline SVG; three
+  glyphs do not justify a dependency.
+- **Every colour, size, and radius is a token in `index.css`.** Components never
+  name a colour. The palette, the type scale, and the rate-class ladder live in
+  one `@theme inline` block, and the dark theme is the same block with different
+  values — which is why there is not a single `dark:` class in any component.
+  This block is meant to be lifted into the sibling projects so they read as one
+  body of work.
+- **The rate-class ladder is one variable per tier.** An element sets `--tier`
+  and the `.tier-chip` / `.tier-dot` / `.tier-rail` rules mix their background,
+  text, and border out of it with `color-mix`. Adding a rate class means adding
+  one hue, not three shades that later drift apart.
+- **Colour scheme has three states, not two.** Light, dark, and "follow the
+  system" — the last is the default and the one most readers never change. A
+  small inline script in `index.html` applies a stored choice before first
+  paint; doing it in React paints light and then flips, and a white flash on a
+  dark machine is worse than not offering the choice.
 - **Types are hand-written, not generated.** `api/types.ts` mirrors
   `backend/app/models/verdict.py` by hand. Codegen was rejected because the
   surface is three endpoints and a generator is a build step to maintain.

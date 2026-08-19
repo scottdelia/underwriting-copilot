@@ -1,11 +1,7 @@
-import {
-  CANONICAL_ORDER,
-  type CanonicalClass,
-  type ComparisonResponse,
-  type DirectAnswer,
-} from '../api/types';
+import type { ComparisonResponse, DirectAnswer } from '../api/types';
+import { tierRank } from '../theme';
 import { ProfileCard } from './ProfileCard';
-import { VerdictCard } from './VerdictCard';
+import { VerdictRow } from './VerdictRow';
 
 /**
  * Renders whichever shape the backend returned.
@@ -17,33 +13,32 @@ import { VerdictCard } from './VerdictCard';
  * the guide's own words. Only a described prospect gets carrier verdicts.
  */
 
-/** Sorts verdicts best-offer-first so the comparison reads at a glance. */
-function byLadder(a: CanonicalClass | null, b: CanonicalClass | null): number {
-  const rank = (value: CanonicalClass | null) =>
-    value ? CANONICAL_ORDER.indexOf(value) : CANONICAL_ORDER.length;
-  return rank(a) - rank(b);
-}
-
 function DirectAnswerView({ answer }: { answer: DirectAnswer }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4">
-      <h2 className="text-sm font-semibold text-slate-900">
-        {answer.kind === 'build_lookup'
-          ? 'Published build limits'
-          : 'What the guides say'}
-      </h2>
-      {answer.note && (
-        <p className="mt-1 text-xs text-slate-500">{answer.note}</p>
-      )}
-      <ul className="mt-3 space-y-3">
+    <section className="card overflow-hidden">
+      <div className="border-b border-line px-5 py-3.5">
+        <h2 className="text-sm font-semibold text-ink">
+          {answer.kind === 'build_lookup'
+            ? 'Published build limits'
+            : 'What the guides say'}
+        </h2>
+        {answer.note && (
+          <p className="mt-1 text-xs leading-relaxed text-ink-subtle">
+            {answer.note}
+          </p>
+        )}
+      </div>
+      <ul className="divide-y divide-line">
         {answer.claims.map((claim, index) => (
-          <li key={index} className="border-l-2 border-slate-200 pl-3">
-            <p className="text-sm text-slate-800">{claim.statement}</p>
-            <blockquote className="mt-1 border-l-2 border-slate-300 bg-slate-50 py-1.5 pl-2.5 text-xs italic leading-relaxed text-slate-600">
+          <li key={index} className="px-5 py-4">
+            <p className="text-sm leading-relaxed text-ink">
+              {claim.statement}
+            </p>
+            <blockquote className="excerpt mt-2 italic">
               &ldquo;{claim.citation.excerpt}&rdquo;
             </blockquote>
-            <p className="mt-1 text-xs text-slate-400">
-              {claim.citation.doc_id} &middot; page {claim.citation.page}
+            <p className="mt-1.5 font-mono text-[0.6875rem] tracking-tight text-ink-faint">
+              {claim.citation.doc_id} · p.{claim.citation.page}
             </p>
           </li>
         ))}
@@ -54,37 +49,61 @@ function DirectAnswerView({ answer }: { answer: DirectAnswer }) {
 
 export function ResultView({ result }: { result: ComparisonResponse }) {
   const outOfScope = result.query_type === 'out_of_scope';
-  const verdicts = [...result.verdicts].sort((a, b) =>
-    byLadder(a.canonical_class, b.canonical_class),
+
+  // Best offer first, so the comparison reads down the column.
+  const verdicts = [...result.verdicts].sort(
+    (a, b) => tierRank(a.canonical_class) - tierRank(b.canonical_class),
   );
+  const classifiedCount = verdicts.filter(
+    (verdict) => verdict.determination === 'classified',
+  ).length;
 
   return (
     <div className="space-y-4">
-      {/* Surfacing that a citation was discarded, rather than hiding it. A
+      {/* Surfacing that a citation was discarded rather than hiding it. A
           non-zero count means the tool caught itself quoting something it could
-          not find in the source, and a reader is entitled to know that
-          happened on their query. */}
+          not find in the source, and a reader is entitled to know that happened
+          on their query. */}
       {result.unverified_claims_dropped > 0 && (
-        <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-900">
-          <span className="font-semibold">
-            {result.unverified_claims_dropped} unverifiable{' '}
-            {result.unverified_claims_dropped === 1 ? 'claim was' : 'claims were'}{' '}
-            discarded.
-          </span>{' '}
-          Their quoted text could not be found in the cited guide, so they are
-          not shown.
+        <div className="note note-warn flex gap-3">
+          <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden
+            className="mt-0.5 size-4 shrink-0"
+          >
+            <circle cx="8" cy="8" r="6.4" stroke="currentColor" strokeWidth="1.4" />
+            <path
+              d="M8 4.9v3.6"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+            <circle cx="8" cy="11" r="0.85" fill="currentColor" />
+          </svg>
+          <p>
+            <span className="font-semibold">
+              {result.unverified_claims_dropped} unverifiable{' '}
+              {result.unverified_claims_dropped === 1
+                ? 'claim was'
+                : 'claims were'}{' '}
+              discarded.
+            </span>{' '}
+            Their quoted text could not be found in the cited guide, so they are
+            not shown.
+          </p>
         </div>
       )}
 
       {outOfScope ? (
-        <section className="rounded-lg border border-slate-200 bg-white p-5">
-          <h2 className="text-base font-semibold text-slate-900">
+        <section className="card p-6">
+          <h2 className="text-title font-semibold text-ink">
             The indexed guides cannot answer this
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-600">
+          <p className="mt-3 max-w-prose text-lead text-ink-muted">
             {result.routing_reason}
           </p>
-          <p className="mt-3 text-xs text-slate-500">
+          <p className="mt-4 border-t border-line pt-4 text-sm text-ink-subtle">
             Answering anyway would mean inventing a guideline. Nothing was sent
             to a model beyond classifying the question.
           </p>
@@ -98,23 +117,43 @@ export function ResultView({ result }: { result: ComparisonResponse }) {
           {result.answer && <DirectAnswerView answer={result.answer} />}
 
           {verdicts.length > 0 && (
-            <div className="grid gap-3 md:grid-cols-2">
-              {verdicts.map((verdict) => (
-                <VerdictCard key={verdict.carrier_id} verdict={verdict} />
-              ))}
-            </div>
+            <section className="card overflow-hidden">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line px-5 py-3.5">
+                <h2 className="text-sm font-semibold text-ink">
+                  Carrier comparison
+                </h2>
+                <p className="text-xs text-ink-subtle">
+                  Ranked best offer first ·{' '}
+                  <span className="tabular">{classifiedCount}</span> of{' '}
+                  <span className="tabular">{verdicts.length}</span> classified ·
+                  open a row for the guideline text
+                </p>
+              </div>
+              <ul>
+                {verdicts.map((verdict, index) => (
+                  <VerdictRow
+                    key={verdict.carrier_id}
+                    verdict={verdict}
+                    // Rank counts classified verdicts only. An abstention has
+                    // no position on the ladder, so it is shown unranked rather
+                    // than given a number that implies it placed last.
+                    rank={
+                      verdict.determination === 'classified' ? index + 1 : null
+                    }
+                  />
+                ))}
+              </ul>
+            </section>
           )}
         </>
       )}
 
-      <p className="text-xs text-slate-400">
-        Answered in {(result.latency_ms / 1000).toFixed(1)}s
-        {result.model !== 'none (answered without a model)' && (
-          <> &middot; {result.model}</>
-        )}
-        {result.model === 'none (answered without a model)' && (
-          <> &middot; read directly from the indexed documents</>
-        )}
+      <p className="flex flex-wrap items-center gap-x-2 gap-y-1 px-1 text-xs text-ink-faint">
+        <span className="tabular">
+          Answered in {(result.latency_ms / 1000).toFixed(1)}s
+        </span>
+        <span aria-hidden>·</span>
+        <span className="font-mono tracking-tight">{result.model}</span>
       </p>
     </div>
   );
