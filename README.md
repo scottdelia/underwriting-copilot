@@ -28,7 +28,7 @@ Built in phases. This is what currently runs.
 | 3 | Prospect parser, retrieval router, synthesis with citations | Done |
 | 4 | 50-item eval dataset and scoring harness | Done |
 | 5 | Frontend | Done |
-| 6 | Deploy, write-up, demo video | Not started |
+| 6 | Deploy, write-up, demo video | In progress |
 
 `POST /compare` answers the demo scenario end to end in **14.3s**, under the
 15-second target. `/search` remains as a developer-facing retrieval probe.
@@ -164,6 +164,42 @@ cd backend && python -m pytest tests/ -q
 
 ---
 
+## The published build
+
+The deployed site is static and answers from recorded responses. That is a
+choice, not a shortcut. A portfolio link has to work when a stranger opens it,
+and the two live options both fail that test: a free-tier backend sleeps and
+answers the first click a minute later, and an always-on one holds a paid API
+key behind a shared secret the reader does not have.
+
+So `npm run build:demo` produces a bundle that reads from
+`frontend/public/fixtures/`. Every file there is a real response from this
+pipeline, captured by `tools/capture_fixtures.py` from a live run, carrying that
+run's own latency and its own dropped-citation count. Nothing is hand-written,
+and the recorded set includes a query the tool correctly refuses.
+
+What a recording cannot do is answer a query nobody ran. The UI says so, and
+offers the queries it does have. To type your own, run the backend locally --
+that is the same code path, and it is the one the eval measures.
+
+```bash
+cd frontend && npm run build:demo   # static bundle, no backend needed
+npm run build                        # normal build, talks to the API
+```
+
+Regenerate the recordings with the backend running:
+
+```bash
+python tools/capture_fixtures.py
+```
+
+The queries live in `frontend/src/api/exampleQueries.json`, which the UI and the
+capture script both read. They are matched by a hash of the query text, so a
+one-character difference between the two lists silently breaks an example
+button -- which it did, once, before they shared a file.
+
+---
+
 ## Corpus
 
 **There are no real carrier documents in this project.** The corpus is four
@@ -258,30 +294,45 @@ never in scope, rather than because a prompt asked the model not to do it.
 
 ```
 backend/app/
-  config.py           settings, environment only
-  main.py             FastAPI app, middleware, /health and /search
+  config.py            settings, environment only
+  main.py              FastAPI app, middleware, /health, /search, /compare
   ingest/
-    extract_text.py   prose extraction and chunking
-    embeddings.py     local (free, no key) or Voyage backends
-    build_index.py    corpus -> Chroma
-    classify_pages.py which pages hold structured content
-    extract_tables.py vision extraction + 3 layers of validation
-    normalize.py      carrier rate classes -> canonical ladder
-    store.py          SQLite persistence
-    build_tables.py   corpus -> SQLite
+    extract_text.py    prose extraction and chunking
+    embeddings.py      local (free, no key) or Voyage backends
+    build_index.py     corpus -> Chroma
+    classify_pages.py  which pages hold structured content
+    extract_tables.py  vision extraction + 3 layers of validation
+    normalize.py       carrier rate classes -> canonical ladder
+    store.py           SQLite persistence
+    build_tables.py    corpus -> SQLite
   retrieval/
-    semantic.py       vector search over prose
-    structured.py     SQL lookups for build limits and condition rules
+    router.py          classifies the query, gathers per-carrier evidence
+    semantic.py        vector search over prose
+    structured.py      SQL lookups for build limits and condition rules
   synthesis/
-    prompts.py        every prompt, versioned
+    answer.py          per-carrier synthesis, citation verification, abstention
+    prompts.py         every prompt, versioned
   security/
-    auth.py           shared-secret gate
-    sanitize.py       input validation, prompt-injection fencing
-  models/schemas.py   Pydantic models for every boundary
-backend/eval/ground_truth/   exact expected extraction, per carrier
-backend/eval/extraction_report.py  scores extraction against ground truth
-backend/eval/results/        timestamped run outputs
-tools/                       corpus generator
+    auth.py            shared-secret gate
+    sanitize.py        input validation, prompt-injection fencing
+  models/
+    profile.py         parsed prospect profile and query plan
+    verdict.py         claims, citations, per-carrier verdicts, API response
+    extraction.py      vision extraction schemas
+    schemas.py         shared boundary models
+backend/eval/
+  run_eval.py                50-item pipeline eval, six metrics, N runs
+  extraction_report.py       scores extraction against ground truth
+  dataset.jsonl              the labelled set
+  ground_truth/              exact expected extraction, per carrier
+  results/                   timestamped run outputs
+  REVIEW.md                  human-review checklist for the generated labels
+tools/
+  carrier_data.py            the four carriers as structured data
+  generate_corpus.py         structured data -> rendered PDFs + ground truth
+  eval_oracle.py             expected outcomes, independent of the pipeline
+  build_eval_dataset.py      oracle -> dataset.jsonl
+frontend/src/                React client; see frontend/README.md
 ```
 
 ---
@@ -323,6 +374,14 @@ Full detail is in the source comments; the short version:
   queries are **rejected, not truncated**, because a truncated query answers a
   question nobody asked. Strict CORS allowlist, never a wildcard. HSTS,
   `X-Content-Type-Options`, and a restrictive CSP on every response.
+- **Secret scanning** — `detect-secrets` runs over every tracked file, wired as
+  a pre-commit hook in `.pre-commit-config.yaml`. The current scan reports four
+  hits, all in `backend/tests/`: the literal fixtures `test-secret`,
+  `correct-horse`, `battery-staple`, and `nope`, which exist so the auth tests
+  can assert that a wrong secret is rejected. They are recorded as reviewed in
+  `.secrets.baseline`, so anything new fails the commit rather than blending in.
+  Full history was checked separately: `.env` has never been tracked, no corpus
+  PDF has ever been committed, and no key-shaped string appears in any diff.
 - **Logging** — query text is logged as a hash plus a short prefix, never in the
   clear. The demo inputs are synthetic, but a real deployment would carry health
   details about named individuals in every query.
