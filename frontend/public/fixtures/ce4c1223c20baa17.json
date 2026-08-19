@@ -1,0 +1,47 @@
+{
+  "query": "What is Northstar’s cigar smoking exception?",
+  "query_type": "prose_question",
+  "routing_reason": "The agent asks what the guide states about a specific policy topic (cigar smoking exception) for a named carrier.",
+  "profile": {
+    "conditions": [],
+    "medications": []
+  },
+  "verdicts": [],
+  "answer": {
+    "kind": "prose_question",
+    "claims": [
+      {
+        "statement": "Northstar Mutual Life, section \"Tobacco and Nicotine Use\":",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 5,
+          "excerpt": "An applicant is classified as Non-Tobacco when there has been no use of cigarettes, cigars, pipes, chewing tobacco, snuff, nicotine patches, nicotine gum, or electronic nicotine delivery systems within the 12 months preceding the application date, and the laboratory specimen is negative for cotinine. Occasional celebratory cigar use, defined as no more than 12 cigars per calendar year with a negative cotinine result, does not by itself require a Tobacco classification."
+        }
+      },
+      {
+        "statement": "Northstar Mutual Life, section \"Obstructive Sleep Apnea\":",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 5,
+          "excerpt": "Obstructive sleep apnea with documented CPAP compliance of at least four hours per night on 70 percent of nights may be considered for Standard Plus. Untreated sleep apnea, or documented non-compliance, limits the best available class to Standard. Conditions that preclude the best available class: untreated moderate to severe apnea documented CPAP non-compliance co-existing pulmonary hypertension"
+        }
+      },
+      {
+        "statement": "Northstar Mutual Life, section \"Family History\":",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 5,
+          "excerpt": "A Preferred Elite classification requires that no biological parent or sibling was diagnosed with coronary artery disease or died of a cardiovascular cause before age 60. A single affected relative reduces the best available class to Preferred. Family history of cancer is not considered for classification purposes except in the case of two or more first-degree relatives with the same malignancy diagnosed before age 50."
+        }
+      }
+    ],
+    "note": "Passages quoted verbatim from the indexed guides. No model was used to summarise them."
+  },
+  "retrieved_pages": {},
+  "unverified_claims_dropped": 0,
+  "latency_ms": 1949,
+  "model": "claude-sonnet-5 (routing only)"
+}

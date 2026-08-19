@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   compare,
+  DEMO_MODE,
   getHealth,
   hasSharedSecret,
   setSharedSecret,
 } from './api/client';
 import {
+  DemoQueryUnavailableError,
   InputRejectedError,
   UnauthorizedError,
   type ComparisonResponse,
   type HealthResponse,
 } from './api/types';
+import exampleQueries from './api/exampleQueries.json';
 import { Disclaimer } from './components/Disclaimer';
 import { ResultView } from './components/ResultView';
 
@@ -23,18 +26,29 @@ import { ResultView } from './components/ResultView';
  * something a demo should accumulate.
  */
 
-const EXAMPLES = [
-  '55 year old male, A1c 7.1 controlled on metformin, BMI 31, non-smoker, $500K 20-year term',
-  "What is the maximum weight at 5'10\" for Northstar Mutual Life Standard Plus?",
-  'What is Northstar’s cigar smoking exception?',
-  '48 year old female, 5′6″, 210 lb, treated hypertension averaging 138/84, non-smoker',
-];
+/**
+ * The seeded example queries.
+ *
+ * Imported rather than written here because tools/capture_fixtures.py reads the
+ * same file: the published build looks recordings up by hashing the query, so
+ * an example button whose text differs from the captured query by one
+ * character silently stops working. It differed by one character ("5'6" versus
+ * "5'06"") until this was made a single source.
+ *
+ * The last entry is out of scope on purpose. A demo that only seeds queries the
+ * tool can answer hides the behaviour that matters most in a regulated context,
+ * which is what it does when it cannot answer.
+ */
+const EXAMPLES: string[] = exampleQueries;
 
 export default function App() {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState<ComparisonResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Set when the static build has no recording for a query. Holds the queries
+  // it does have, so the reader is offered them rather than told "no".
+  const [demoMiss, setDemoMiss] = useState<string[] | null>(null);
   const [needsSecret, setNeedsSecret] = useState(false);
   const [secret, setSecret] = useState('');
   const [health, setHealth] = useState<HealthResponse | null>(null);
@@ -60,6 +74,7 @@ export default function App() {
 
     setLoading(true);
     setError(null);
+    setDemoMiss(null);
     setResult(null);
 
     try {
@@ -68,6 +83,8 @@ export default function App() {
       if (caught instanceof DOMException && caught.name === 'AbortError') return;
       if (caught instanceof UnauthorizedError) {
         setNeedsSecret(true);
+      } else if (caught instanceof DemoQueryUnavailableError) {
+        setDemoMiss(caught.available);
       } else if (caught instanceof InputRejectedError) {
         // The backend's own explanation, shown verbatim. It knows why it
         // refused; paraphrasing it into "something went wrong" would throw
@@ -102,6 +119,28 @@ export default function App() {
             across carriers, with the guideline text behind each answer.
           </p>
         </header>
+
+        {DEMO_MODE && (
+          <div
+            role="note"
+            className="mb-6 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900"
+          >
+            <p>
+              <span className="font-medium">Recorded responses.</span> This
+              published build has no server behind it. Each answer below is a
+              real response from the pipeline, captured from a live run — the
+              rate classes, the quoted guideline text, the page citations, and
+              the count of claims dropped in verification are all that run&rsquo;s
+              own output, and the timing shown is the time that run actually
+              took.
+            </p>
+            <p className="mt-2">
+              What a recording cannot do is answer a query nobody ran. Use one
+              of the examples below, or clone the repository and run it against
+              the live backend to type your own.
+            </p>
+          </div>
+        )}
 
         {indexDown && (
           <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
@@ -194,7 +233,7 @@ export default function App() {
           </div>
         </form>
 
-        {!result && !loading && !error && (
+        {!result && !loading && !error && !demoMiss && (
           <div className="mt-6">
             <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
               Try
@@ -234,6 +273,38 @@ export default function App() {
                 />
               ))}
             </div>
+          </div>
+        )}
+
+        {demoMiss && (
+          <div
+            role="status"
+            className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          >
+            <p className="font-medium">
+              No recording for that query.
+            </p>
+            <p className="mt-1">
+              This published build answers from responses captured in advance,
+              so it can only answer the queries that were run. These are the
+              ones it has:
+            </p>
+            <ul className="mt-2 space-y-1">
+              {demoMiss.map((available) => (
+                <li key={available}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuery(available);
+                      void run(available);
+                    }}
+                    className="text-left underline decoration-amber-400 underline-offset-2 hover:text-amber-950"
+                  >
+                    {available}
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 

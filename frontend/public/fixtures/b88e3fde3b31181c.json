@@ -1,0 +1,248 @@
+{
+  "query": "55 year old male, A1c 7.1 controlled on metformin, BMI 31, non-smoker, $500K 20-year term",
+  "query_type": "prospect_comparison",
+  "routing_reason": "The agent describes a specific prospect's health details and wants carrier classification for a term policy.",
+  "profile": {
+    "age": 55,
+    "gender": "male",
+    "bmi": 31.0,
+    "conditions": [
+      "type_2_diabetes"
+    ],
+    "a1c": 7.1,
+    "medications": [
+      "metformin"
+    ],
+    "tobacco": false,
+    "coverage_amount_usd": 500000,
+    "product_type": "20-year term"
+  },
+  "verdicts": [
+    {
+      "carrier_id": "northstar",
+      "carrier_name": "Northstar Mutual Life",
+      "determination": "classified",
+      "carrier_label": "Standard",
+      "canonical_class": "standard",
+      "qualifying": [
+        {
+          "statement": "With A1c of 7.1, the guide places this applicant's diabetes in the 7.0–7.9 band, which limits the best available class to Standard, provided treatment is oral agents only.",
+          "citation": {
+            "carrier_id": "northstar_mutual",
+            "doc_id": "northstar_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "7.0 - 7.9 | Standard | Oral agents only †"
+          }
+        },
+        {
+          "statement": "The applicant is treated with metformin, an oral agent, consistent with the Standard row's requirement.",
+          "citation": {
+            "carrier_id": "northstar_mutual",
+            "doc_id": "northstar_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "Oral agents only †"
+          }
+        },
+        {
+          "statement": "The build assessment, derived from the published chart, allows up to Standard given the applicant's BMI of 31.0.",
+          "citation": {
+            "carrier_id": "northstar_mutual",
+            "doc_id": "northstar_underwriting_guide.pdf",
+            "page": 2,
+            "excerpt": "Build Chart - Maximum Weight by Height"
+          }
+        },
+        {
+          "statement": "The applicant qualifies for Non-Tobacco classification as a stated non-smoker, assuming no nicotine use in the past 12 months.",
+          "citation": {
+            "carrier_id": "northstar_mutual",
+            "doc_id": "northstar_underwriting_guide.pdf",
+            "page": 5,
+            "excerpt": "An applicant is classified as Non-Tobacco when there has been no use of cigarettes, cigars, pipes, chewing tobacco, snuff, nicotine patches, nicotine gum, or electronic nicotine delivery systems within the 12 months preceding the application date"
+          }
+        }
+      ],
+      "disqualifying": [
+        {
+          "statement": "An A1c of 7.1 excludes the applicant from Standard Plus, which requires A1c below 7.0.",
+          "citation": {
+            "carrier_id": "northstar_mutual",
+            "doc_id": "northstar_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "Below 7.0 | Standard Plus | Oral agents only †"
+          }
+        }
+      ],
+      "missing_information": [
+        "Height and exact weight to confirm the build classification precisely.",
+        "Age at diabetes diagnosis (must be 40 or later to qualify for the Standard track at all).",
+        "Whether treatment is limited strictly to oral agents with no insulin use.",
+        "Presence or absence of retinopathy, nephropathy, neuropathy, or peripheral vascular disease.",
+        "Cotinine test result and any nicotine product use within the past 12 months to confirm Non-Tobacco status."
+      ],
+      "abstention_reason": null
+    },
+    {
+      "carrier_id": "cardinal",
+      "carrier_name": "Cardinal Assurance Company",
+      "determination": "classified",
+      "carrier_label": "Select NT",
+      "canonical_class": "standard_plus",
+      "qualifying": [
+        {
+          "statement": "With BMI 31.0 and A1c 7.1, the diabetes grid places the applicant in the BMI 30.1-32.0 column and A1c 6.6-7.5 row, which yields Select NT.",
+          "citation": {
+            "carrier_id": "cardinal",
+            "doc_id": "cardinal_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "6.6 - 7.5 | Select NT | Select NT | Standard NT"
+          }
+        },
+        {
+          "statement": "The general rule confirms an A1c of 7.5 or below with BMI not exceeding 32 and no complications qualifies for Select NT.",
+          "citation": {
+            "carrier_id": "cardinal",
+            "doc_id": "cardinal_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "An applicant whose most recent hemoglobin A1c is 7.5 or below, whose body mass index does not exceed 32, and who has no diabetic complications of any kind may be offered Select NT."
+          }
+        }
+      ],
+      "disqualifying": [
+        {
+          "statement": "The applicant is not eligible for the Preferred NT individual consideration pathway because that is limited to applicants under age 50, and this applicant is 55.",
+          "citation": {
+            "carrier_id": "cardinal",
+            "doc_id": "cardinal_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "Applicants meeting these criteria who are also under age 50 at application may be considered for Preferred NT on an individual basis."
+          }
+        }
+      ],
+      "missing_information": [
+        "Confirmation of no diabetic complications (the grid and rule both assume none)",
+        "Confirmation of no insulin use within the past 24 months",
+        "Height and weight to confirm exact BMI and build classification",
+        "Cholesterol/HDL ratio and total cholesterol values, which independently affect classification"
+      ],
+      "abstention_reason": null
+    },
+    {
+      "carrier_id": "meridian",
+      "carrier_name": "Meridian Life & Annuity",
+      "determination": "classified",
+      "carrier_label": "Standard",
+      "canonical_class": "standard",
+      "qualifying": [
+        {
+          "statement": "With an A1c of 7.1, the applicant falls in the 7.0-8.0 range, which qualifies for Standard regardless of duration.",
+          "citation": {
+            "carrier_id": "meridian",
+            "doc_id": "meridian_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "7.0 - 8.0 | Standard | Standard"
+          }
+        },
+        {
+          "statement": "The applicant's BMI of 31.0 is within the build limit that allows Standard classification.",
+          "citation": {
+            "carrier_id": "meridian",
+            "doc_id": "meridian_underwriting_guide.pdf",
+            "page": 2,
+            "excerpt": "Build Chart - Maximum Weight by Height"
+          }
+        }
+      ],
+      "disqualifying": [
+        {
+          "statement": "The applicant's A1c of 7.1 exceeds the 6.9 threshold required for Standard Plus consideration, so a better class than Standard is not supported.",
+          "citation": {
+            "carrier_id": "meridian",
+            "doc_id": "meridian_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "An applicant with Type 2 diabetes may be considered for Standard Plus only where the most recent hemoglobin A1c is 6.9 or below and at least two consecutive readings taken not less than three months apart are below 7.0."
+          }
+        }
+      ],
+      "missing_information": [
+        "Duration of diabetes since first diagnosis (affects table row placement, though both rows for 7.0-8.0 yield Standard)",
+        "At least two consecutive A1c readings below 7.0, three months apart, needed to evaluate for Standard Plus",
+        "Height and weight to precisely confirm the build limit rather than the derived BMI ceiling",
+        "Confirmation of absence of diabetic nephropathy"
+      ],
+      "abstention_reason": null
+    },
+    {
+      "carrier_id": "granite",
+      "carrier_name": "Granite Peak Financial Group",
+      "determination": "classified",
+      "carrier_label": "Table 2",
+      "canonical_class": "table_rated",
+      "qualifying": [
+        {
+          "statement": "The applicant's BMI of 31.0 falls in the 30.1-35.0 range, which carries a minimum rating of Table 2.",
+          "citation": {
+            "carrier_id": "granite_peak",
+            "doc_id": "granite_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "30.1 - 35.0 | Table 2 | A1c below 7.5 ‡"
+          }
+        },
+        {
+          "statement": "The applicant's A1c of 7.1 is below the 7.5 threshold, so no additional table is added to the Table 2 minimum.",
+          "citation": {
+            "carrier_id": "granite_peak",
+            "doc_id": "granite_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "‡ An A1c of 7.5 or above adds one additional table to the minimum rating shown."
+          }
+        }
+      ],
+      "disqualifying": [
+        {
+          "statement": "The diabetes diagnosis alone bars the applicant from any class better than Standard, and combined with the elevated BMI the minimum rating rises to Table 2.",
+          "citation": {
+            "carrier_id": "granite_peak",
+            "doc_id": "granite_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "Where the body mass index exceeds 30.0 in combination with a diabetes diagnosis, the minimum rating is Table 2."
+          }
+        }
+      ],
+      "missing_information": [
+        "Exact height and weight to confirm precise BMI and build classification",
+        "Age at diabetes diagnosis, to confirm it was not before age 30",
+        "Confirmation that the applicant does not use insulin"
+      ],
+      "abstention_reason": null
+    }
+  ],
+  "answer": null,
+  "retrieved_pages": {
+    "northstar": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "cardinal": [
+      2,
+      4,
+      5
+    ],
+    "meridian": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "granite": [
+      2,
+      4,
+      5
+    ]
+  },
+  "unverified_claims_dropped": 1,
+  "latency_ms": 12636,
+  "model": "claude-sonnet-5"
+}

@@ -1,0 +1,93 @@
+{
+  "query": "What is the maximum weight at 5'10\" for Northstar Mutual Life Standard Plus?",
+  "query_type": "build_lookup",
+  "routing_reason": "The agent asks for a specific published weight limit at a stated height and rate class for a named carrier.",
+  "profile": {
+    "height_inches": 70,
+    "conditions": [],
+    "medications": []
+  },
+  "verdicts": [],
+  "answer": {
+    "kind": "build_lookup",
+    "claims": [
+      {
+        "statement": "Northstar Mutual Life publishes a maximum of 185 lb at 5'10\" for Preferred Elite (female).",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 3,
+          "excerpt": "Preferred Elite: maximum 185 lb"
+        }
+      },
+      {
+        "statement": "Northstar Mutual Life publishes a maximum of 189 lb at 5'10\" for Preferred Elite (male).",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 3,
+          "excerpt": "Preferred Elite: maximum 189 lb"
+        }
+      },
+      {
+        "statement": "Northstar Mutual Life publishes a maximum of 194 lb at 5'10\" for Preferred (female).",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 3,
+          "excerpt": "Preferred: maximum 194 lb"
+        }
+      },
+      {
+        "statement": "Northstar Mutual Life publishes a maximum of 199 lb at 5'10\" for Preferred (male).",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 3,
+          "excerpt": "Preferred: maximum 199 lb"
+        }
+      },
+      {
+        "statement": "Northstar Mutual Life publishes a maximum of 208 lb at 5'10\" for Standard Plus (female).",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 3,
+          "excerpt": "Standard Plus: maximum 208 lb"
+        }
+      },
+      {
+        "statement": "Northstar Mutual Life publishes a maximum of 213 lb at 5'10\" for Standard Plus (male).",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 3,
+          "excerpt": "Standard Plus: maximum 213 lb"
+        }
+      },
+      {
+        "statement": "Northstar Mutual Life publishes a maximum of 222 lb at 5'10\" for Standard * (female).",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 3,
+          "excerpt": "Standard *: maximum 222 lb"
+        }
+      },
+      {
+        "statement": "Northstar Mutual Life publishes a maximum of 227 lb at 5'10\" for Standard * (male).",
+        "citation": {
+          "carrier_id": "northstar",
+          "doc_id": "northstar_underwriting_guide.pdf",
+          "page": 3,
+          "excerpt": "Standard *: maximum 227 lb"
+        }
+      }
+    ],
+    "note": "Read directly from the published build charts at 5'10\". No model was used to produce these figures."
+  },
+  "retrieved_pages": {},
+  "unverified_claims_dropped": 0,
+  "latency_ms": 1972,
+  "model": "claude-sonnet-5 (routing only)"
+}

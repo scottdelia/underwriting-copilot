@@ -1,0 +1,12 @@
+{
+  "query": "Which carrier has the best rates for dental insurance in Ohio?",
+  "query_type": "out_of_scope",
+  "routing_reason": "Dental insurance is not a life insurance underwriting topic, so no life insurance underwriting guide could answer this.",
+  "profile": {},
+  "verdicts": [],
+  "answer": null,
+  "retrieved_pages": {},
+  "unverified_claims_dropped": 0,
+  "latency_ms": 1922,
+  "model": "claude-sonnet-5 (routing only)"
+}

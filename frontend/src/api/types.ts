@@ -99,3 +99,21 @@ export class UnauthorizedError extends Error {}
 
 /** Raised when the backend refuses the input, carrying its explanation. */
 export class InputRejectedError extends Error {}
+
+/**
+ * Raised by the static demo build for a query it has no recording of.
+ *
+ * Carries the queries it *does* have, so the UI can offer them rather than
+ * leaving the reader guessing which inputs the deployed build can answer.
+ */
+export class DemoQueryUnavailableError extends Error {
+  // Declared and assigned separately rather than as a constructor parameter
+  // property: tsconfig sets erasableSyntaxOnly, which bars the shorthand
+  // because it emits code rather than being erased with the types.
+  available: string[];
+
+  constructor(available: string[]) {
+    super('That query is not in the recorded demo set.');
+    this.available = available;
+  }
+}

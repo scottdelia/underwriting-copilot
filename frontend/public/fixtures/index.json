@@ -1,0 +1,27 @@
+[
+  {
+    "key": "b88e3fde3b31181c",
+    "query": "55 year old male, A1c 7.1 controlled on metformin, BMI 31, non-smoker, $500K 20-year term",
+    "query_type": "prospect_comparison"
+  },
+  {
+    "key": "d5b959d3b81b532e",
+    "query": "What is the maximum weight at 5'10\" for Northstar Mutual Life Standard Plus?",
+    "query_type": "build_lookup"
+  },
+  {
+    "key": "ce4c1223c20baa17",
+    "query": "What is Northstar’s cigar smoking exception?",
+    "query_type": "prose_question"
+  },
+  {
+    "key": "9c3189c21bdd5a67",
+    "query": "48 year old female, 5′06″, 210 lb, treated hypertension averaging 138/84, non-smoker",
+    "query_type": "prospect_comparison"
+  },
+  {
+    "key": "13422b9b6526cc63",
+    "query": "Which carrier has the best rates for dental insurance in Ohio?",
+    "query_type": "out_of_scope"
+  }
+]

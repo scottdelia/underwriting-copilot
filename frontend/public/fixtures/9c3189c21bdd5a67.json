@@ -1,0 +1,161 @@
+{
+  "query": "48 year old female, 5′06′′, 210 lb, treated hypertension averaging 138/84, non-smoker",
+  "query_type": "prospect_comparison",
+  "routing_reason": "The agent describes a specific prospect's age, build, blood pressure, and smoking status, implying a request for carrier classification comparison.",
+  "profile": {
+    "age": 48,
+    "gender": "female",
+    "height_inches": 66,
+    "weight_lbs": 210,
+    "bmi": 33.9,
+    "conditions": [
+      "hypertension"
+    ],
+    "medications": [],
+    "tobacco": false
+  },
+  "verdicts": [
+    {
+      "carrier_id": "northstar",
+      "carrier_name": "Northstar Mutual Life",
+      "determination": "insufficient_information",
+      "carrier_label": null,
+      "canonical_class": null,
+      "qualifying": [
+        {
+          "statement": "The applicant's average blood pressure of 138/84 meets Northstar's Preferred threshold for treated hypertension, which requires an average no higher than 140/85.",
+          "citation": {
+            "carrier_id": "northstar_mutual_life",
+            "doc_id": "northstar_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "Treated hypertension is acceptable at Preferred provided the average of the two most recent readings does not exceed 140/85 and treatment has been stable for at least six months."
+          }
+        },
+        {
+          "statement": "Under Table 3.1, a 48-year-old applicant (Under 50 band) with an average of 138/84 also qualifies for Preferred, whose limit is 140/85 for that age band.",
+          "citation": {
+            "carrier_id": "northstar_mutual_life",
+            "doc_id": "northstar_underwriting_guide.pdf",
+            "page": 4,
+            "excerpt": "Under 50 | 135/85 | 140/85 | 145/90 | 150/90"
+          }
+        }
+      ],
+      "disqualifying": [
+        {
+          "statement": "At 5'6\" and 210 lb, the applicant exceeds every published build limit, including the maximum for Standard (198 lb), which under Northstar's rule that build and condition limits are evaluated independently and the worse governs would place the applicant below any class the hypertension findings alone would support.",
+          "citation": {
+            "carrier_id": "northstar_mutual_life",
+            "doc_id": "northstar_underwriting_guide.pdf",
+            "page": 2,
+            "excerpt": "Standard *: maximum 198 lb"
+          }
+        }
+      ],
+      "missing_information": [
+        "Confirmation that hypertension treatment has been stable for at least six months, as required for Preferred eligibility.",
+        "The guide does not state what specific rate class or table rating applies to an applicant whose weight exceeds even the Standard build limit; only the Standard maximum (198 lb) is published, with an unexplained footnote asterisk that is not defined in the retrieved evidence.",
+        "Family history details (parents/siblings with cardiovascular disease) relevant to whether a better class than Preferred could otherwise apply, though this is moot given the build result."
+      ],
+      "abstention_reason": "The applicant's weight (210 lb at 5'6\") exceeds the maximum published for every named build class, including Standard's 198 lb ceiling, but the guide excerpts provided do not include the specific table rating or class name that applies beyond the Standard limit (the 'Standard *' footnote is not explained in the retrieved evidence). Since build limits govern the outcome and no worse-than-Standard classification is named in the evidence, a determination cannot be made without that missing table/rating information."
+    },
+    {
+      "carrier_id": "cardinal",
+      "carrier_name": "Cardinal Assurance Company",
+      "determination": "insufficient_information",
+      "carrier_label": null,
+      "canonical_class": null,
+      "qualifying": [],
+      "disqualifying": [
+        {
+          "statement": "At 5'6\" and 210 lb the applicant's weight exceeds the maximum published for every build class, including Standard NT at 204 lb, so no published build class applies.",
+          "citation": {
+            "carrier_id": "cardinal_assurance",
+            "doc_id": "cardinal_underwriting_guide.pdf",
+            "page": 2,
+            "excerpt": "Standard NT *: maximum 204 lb"
+          }
+        }
+      ],
+      "missing_information": [
+        "The guide provides no build chart row or rating table for weights above the Standard NT maximum, so the resulting build class or rating cannot be determined from the evidence provided.",
+        "No guideline excerpt addressing hypertension was retrieved, so the effect of the applicant's treated hypertension (averaging 138/84) on classification is unknown.",
+        "No cholesterol/lipid values were provided, and the applicable exhibit requires a cholesterol/HDL ratio to determine class."
+      ],
+      "abstention_reason": "The applicant's weight of 210 lb at 5'6\" exceeds every published build limit including the Standard NT maximum of 204 lb, but the guide excerpts provided contain no chart entry, table, or rule describing how applicants above the highest published build limit are classified or rated. Additionally, no hypertension-specific underwriting rule was supplied, so the condition's effect on class cannot be assessed. Without this information a determination cannot be made."
+    },
+    {
+      "carrier_id": "meridian",
+      "carrier_name": "Meridian Life & Annuity",
+      "determination": "insufficient_information",
+      "carrier_label": null,
+      "canonical_class": null,
+      "qualifying": [],
+      "disqualifying": [
+        {
+          "statement": "At 5'6\" and 210 lb, the applicant exceeds the maximum published weight limit for every build class including Standard, the least restrictive listed.",
+          "citation": {
+            "carrier_id": "meridian",
+            "doc_id": "meridian_underwriting_guide.pdf",
+            "page": 2,
+            "excerpt": "Standard *: maximum 202 lb"
+          }
+        }
+      ],
+      "missing_information": [
+        "No underwriting guideline was provided addressing hypertension, which is the applicant's only stated medical condition, so its effect on class cannot be determined.",
+        "No guidance was found for build classes below Standard (e.g., Table ratings) that would apply once the applicant's weight exceeds all published Standard limits."
+      ],
+      "abstention_reason": "The applicant's weight of 210 lb at 5'6\" exceeds the maximum limit for every published build class, including Standard, but the guide excerpts provided contain no table or rule for build-based ratings beyond Standard, and no guideline addressing hypertension (the applicant's stated condition) was supplied. Without a build limit table extending past Standard or a hypertension rule, no determination can be made."
+    },
+    {
+      "carrier_id": "granite",
+      "carrier_name": "Granite Peak Financial Group",
+      "determination": "classified",
+      "carrier_label": "Standard *",
+      "canonical_class": "standard",
+      "qualifying": [
+        {
+          "statement": "At 5'6\" the applicant's weight of 210 lb falls within the Standard * maximum of 211 lb, placing her build in the Standard * class.",
+          "citation": {
+            "carrier_id": "granite_peak",
+            "doc_id": "granite_underwriting_guide.pdf",
+            "page": 2,
+            "excerpt": "Standard *: maximum 211 lb"
+          }
+        }
+      ],
+      "disqualifying": [],
+      "missing_information": [
+        "The guide provided contains no specific underwriting rule addressing hypertension, so its potential effect on the rate class (better or worse than Standard *) could not be evaluated.",
+        "Duration and control history of the hypertension treatment were not detailed beyond the average reading of 138/84."
+      ],
+      "abstention_reason": null
+    }
+  ],
+  "answer": null,
+  "retrieved_pages": {
+    "northstar": [
+      2,
+      4,
+      5
+    ],
+    "cardinal": [
+      4,
+      5
+    ],
+    "meridian": [
+      2,
+      4,
+      5
+    ],
+    "granite": [
+      2,
+      4,
+      5
+    ]
+  },
+  "unverified_claims_dropped": 0,
+  "latency_ms": 22071,
+  "model": "claude-sonnet-5"
+}

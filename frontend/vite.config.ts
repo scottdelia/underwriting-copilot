@@ -4,6 +4,10 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // Relative asset URLs, so the build works from a repository subpath on
+  // GitHub Pages as well as from a domain root. An absolute "/assets/..."
+  // would 404 under /<repo>/.
+  base: './',
   server: {
     // Proxying to the backend keeps the browser on one origin in development,
     // so CORS never enters the picture locally and the same relative /api path
