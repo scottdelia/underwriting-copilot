@@ -11,6 +11,12 @@ prospect in plain language and gets back a comparison of likely rate classes
 across carriers, with the specific guideline text behind each answer and a
 citation to the source page.
 
+**Live demo:** https://scottdelia.github.io/underwriting-copilot/
+**Context:** this is bet 1 of three in an
+[applied-AI portfolio](https://scottdelia.github.io/innovation-office/), which
+carries the business case, the cost, and the verdict alongside the numbers
+below.
+
 No single carrier's guide gives you the comparison. Agents currently guess, ask
 a colleague, or submit and get declined.
 
