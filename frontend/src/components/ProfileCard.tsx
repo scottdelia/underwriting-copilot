@@ -4,9 +4,9 @@ import type { ProspectProfile } from '../api/types';
  * Shows the agent what the tool understood, before they trust what it concluded.
  *
  * The brief asks for the parsed profile to be "shown back for confirmation",
- * and the reason is worth being explicit about: everything downstream — which
+ * and the reason is worth being explicit about. Everything downstream, which
  * build chart row is read, which condition rules are retrieved, which verdict
- * is reached — follows from this parse. If the tool heard "A1c 7.1" as "age
+ * is reached, follows from this parse. If the tool heard "A1c 7.1" as "age
  * 71", every carrier verdict below is confidently wrong and nothing else on the
  * page reveals it.
  *
@@ -81,7 +81,7 @@ export function ProfileCard({ profile }: { profile: ProspectProfile }) {
           What the tool understood
         </h2>
         <p className="text-xs text-ink-subtle">
-          Everything below is derived from this — check it before trusting the
+          Everything below is derived from this. Check it before trusting the
           verdicts.
         </p>
       </div>

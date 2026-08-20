@@ -121,7 +121,7 @@ export function VerdictRow({
         aria-hidden
         className="tabular hidden w-7 shrink-0 text-center text-sm font-semibold text-ink-faint sm:block"
       >
-        {rank ?? '—'}
+        {rank ?? '–'}
       </span>
 
       <span className="min-w-0 flex-1 sm:flex-none sm:basis-[15rem]">

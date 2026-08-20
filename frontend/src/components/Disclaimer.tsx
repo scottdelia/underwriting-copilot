@@ -33,7 +33,7 @@ export function Disclaimer() {
           Every carrier here is <span className="font-semibold">fictional</span>{' '}
           and every guideline is fabricated for this demo. Not affiliated with,
           endorsed by, or connected to any insurance carrier. Underwriting
-          guidelines change frequently — always verify against the
+          guidelines change frequently. Always verify against the
           carrier&rsquo;s current official document. Nothing here is an offer, a
           quote, or underwriting advice.
         </p>

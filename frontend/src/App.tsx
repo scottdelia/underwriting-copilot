@@ -16,13 +16,12 @@ import {
 import exampleQueries from './api/exampleQueries.json';
 import { Disclaimer } from './components/Disclaimer';
 import { ResultView } from './components/ResultView';
-import { ThemeToggle } from './components/ThemeToggle';
 
 /**
  * The whole application: one page, one input, one answer.
  *
  * No router and no chat history, both of which the brief puts out of scope. The
- * absence of history is not only scope discipline — a stored transcript of
+ * absence of history is not only scope discipline. A stored transcript of
  * these queries would be a file of named people's medical details, which is not
  * something a demo should accumulate.
  */
@@ -158,7 +157,6 @@ export default function App() {
               </p>
             </div>
           </div>
-          <ThemeToggle />
         </div>
       </header>
 
@@ -184,7 +182,7 @@ export default function App() {
             <p>
               <span className="font-semibold">Recorded responses.</span> This
               published build has no server behind it. Every answer is a real
-              response from the pipeline captured from a live run — the rate
+              response from the pipeline captured from a live run. The rate
               classes, the quoted guideline text, the page citations, and the
               count of claims dropped in verification are all that run&rsquo;s
               own output, and the timing shown is what that run actually took.

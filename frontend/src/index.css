@@ -1,178 +1,92 @@
 @import "tailwindcss";
 
-/* Inter, self-hosted rather than pulled from a CDN. A font request to a third
-   party on page load carries the reader's IP to someone who did not need it,
-   and this page is about being careful with data. Variable weight, so one file
-   covers the whole scale. */
+/* Self-hosted rather than pulled from a CDN. A font request to a third party on
+   page load carries the reader's IP to someone who did not need it, and these
+   pages are about being careful with data. */
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
 
 /* ---------------------------------------------------------------------------
-   DESIGN TOKENS
+   DESIGN TOKENS  ::  instrument panel
 
-   Every colour, size, and radius the interface uses is declared here and
-   nowhere else. Two reasons that indirection earns its keep.
+   One committed look. There is no light mode, no dark mode, and no toggle.
 
-   Theming: utilities compile to `var(--color-x)` through `@theme inline`, so
-   redefining a variable under a dark-mode selector re-themes the entire
-   application without a single `dark:` class in a component.
+   A theme switch is a way of declining to make a decision, and it doubles the
+   surface every colour choice has to survive. These pages exist to show
+   measurements, so they are built like something you read measurements off:
+   a dark ground, hairline rules instead of cards, one signal colour reserved
+   for live values, and monospaced figures so a column of numbers lines up on
+   the decimal.
 
-   Reuse: this block is meant to be lifted. The portfolio shell and the two
-   applications after it inherit it verbatim, so the three read as one body of
-   work rather than three projects that happen to share an author.
+   Every colour, size, and radius is declared here and nowhere else. The block
+   is meant to be lifted: the portfolio shell and the three applications use it
+   verbatim, so they read as one body of work rather than four projects that
+   happen to share an author.
 --------------------------------------------------------------------------- */
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  /* Ink. Four steps, because three was never enough to separate a heading from
-     a label from a caption without reaching for opacity. */
-  --ink: #0b1220;
-  --ink-muted: #334155;
-  --ink-subtle: #64748b;
-  --ink-faint: #94a3b8;
+  /* Ink. Four steps, because three could not separate a heading from a label
+     from a caption without reaching for opacity. */
+  --ink: #e8edf5;
+  --ink-muted: #a3aec2;
+  --ink-subtle: #737f94;
+  --ink-faint: #4d5768;
 
-  /* Surfaces. `sunken` is the page; `raised` is a card sitting on it. */
-  --surface-sunken: #f6f8fb;
-  --surface: #ffffff;
-  --surface-raised: #ffffff;
-  --surface-inset: #f8fafc;
+  /* Ground and the planes above it. `sunken` is the page itself. */
+  --surface-sunken: #080a10;
+  --surface: #0d1017;
+  --surface-raised: #11151e;
+  --surface-inset: #0a0d14;
 
-  --line: #e6ebf2;
-  --line-strong: #cfd8e3;
+  --line: #1b212c;
+  --line-strong: #2b3444;
 
-  /* One accent, used sparingly. A second would force every element to answer
-     "which one am I", and almost none of them have a reason. */
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-ink: #ffffff;
-  --accent-soft: #eff6ff;
+  /* One signal colour, reserved for values that were actually measured. If it
+     is on the screen in this colour, a number produced it. */
+  --accent: #4dd4ac;
+  --accent-hover: #6ee0bd;
+  --accent-ink: #06120e;
+  --accent-soft: #0e2620;
 
   /* The rate-class ladder, best to worst. One hue per tier; backgrounds and
      borders are mixed from it at render time, so a tier is one number to
      change rather than three shades that drift apart. */
-  --tier-preferred-plus: #059669;
-  --tier-preferred: #10b981;
-  --tier-standard-plus: #0284c7;
-  --tier-standard: #64748b;
-  --tier-table-rated: #d97706;
-  --tier-decline: #e11d48;
+  --tier-preferred-plus: #4dd4ac;
+  --tier-preferred: #3fbf9a;
+  --tier-standard-plus: #58b0e8;
+  --tier-standard: #8a94a8;
+  --tier-table-rated: #e0a340;
+  --tier-decline: #e8737f;
   /* An abstention is not a bad outcome, so it does not get a bad colour. */
-  --tier-none: #94a3b8;
+  --tier-none: #5d6878;
 
-  /* Advisory states. */
-  --warn: #b45309;
-  --warn-soft: #fffbeb;
-  --warn-line: #fde68a;
-  --danger: #be123c;
-  --danger-soft: #fff1f2;
-  --danger-line: #fecdd3;
-  --info: #0369a1;
-  --info-soft: #f0f9ff;
-  --info-line: #bae6fd;
+  --warn: #e0a340;
+  --warn-soft: #1e1708;
+  --warn-line: #443212;
+  --danger: #e8737f;
+  --danger-soft: #200e11;
+  --danger-line: #4a2126;
+  --info: #58b0e8;
+  --info-soft: #08161f;
+  --info-line: #123244;
 
-  --shadow-card: 0 1px 2px rgb(11 18 32 / 0.04), 0 1px 3px rgb(11 18 32 / 0.03);
-  --shadow-raised: 0 4px 12px rgb(11 18 32 / 0.06),
-    0 1px 3px rgb(11 18 32 / 0.04);
-}
-
-/* Dark values, applied by system preference and by explicit choice. The
-   `:not([data-theme="light"])` guard is what lets the toggle override the
-   system rather than fight it. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-
-    --ink: #eef2f8;
-    --ink-muted: #b6c2d4;
-    --ink-subtle: #8b9ab1;
-    --ink-faint: #64748b;
-
-    --surface-sunken: #080b12;
-    --surface: #0f1520;
-    --surface-raised: #141c2a;
-    --surface-inset: #111826;
-
-    --line: #1f2937;
-    --line-strong: #334155;
-
-    --accent: #60a5fa;
-    --accent-hover: #93c5fd;
-    --accent-ink: #0b1220;
-    --accent-soft: #142132;
-
-    --tier-preferred-plus: #34d399;
-    --tier-preferred: #6ee7b7;
-    --tier-standard-plus: #56b6f0;
-    --tier-standard: #94a3b8;
-    --tier-table-rated: #fbbf24;
-    --tier-decline: #fb7185;
-    --tier-none: #64748b;
-
-    --warn: #fbbf24;
-    --warn-soft: #211a08;
-    --warn-line: #3f2f0c;
-    --danger: #fb7185;
-    --danger-soft: #24101a;
-    --danger-line: #4c1d28;
-    --info: #7dd3fc;
-    --info-soft: #0b1b28;
-    --info-line: #14324a;
-
-    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow-raised: 0 8px 24px rgb(0 0 0 / 0.45);
-  }
-}
-
-:root[data-theme="dark"] {
-  color-scheme: dark;
-
-  --ink: #eef2f8;
-  --ink-muted: #b6c2d4;
-  --ink-subtle: #8b9ab1;
-  --ink-faint: #64748b;
-
-  --surface-sunken: #080b12;
-  --surface: #0f1520;
-  --surface-raised: #141c2a;
-  --surface-inset: #111826;
-
-  --line: #1f2937;
-  --line-strong: #334155;
-
-  --accent: #60a5fa;
-  --accent-hover: #93c5fd;
-  --accent-ink: #0b1220;
-  --accent-soft: #142132;
-
-  --tier-preferred-plus: #34d399;
-  --tier-preferred: #6ee7b7;
-  --tier-standard-plus: #56b6f0;
-  --tier-standard: #94a3b8;
-  --tier-table-rated: #fbbf24;
-  --tier-decline: #fb7185;
-  --tier-none: #64748b;
-
-  --warn: #fbbf24;
-  --warn-soft: #211a08;
-  --warn-line: #3f2f0c;
-  --danger: #fb7185;
-  --danger-soft: #24101a;
-  --danger-line: #4c1d28;
-  --info: #7dd3fc;
-  --info-soft: #0b1b28;
-  --info-line: #14324a;
-
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
-  --shadow-raised: 0 8px 24px rgb(0 0 0 / 0.45);
-}
-
-/* `inline` matters here: it makes the generated utilities reference the
-   variables instead of baking their values in, which is what allows the dark
-   blocks above to re-theme utilities that were compiled once. */
-@theme inline {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  /* Figures, labels, and anything that gets compared to something above or
+     below it. */
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo,
+    Consolas, monospace;
+
+  /* Panels are separated by rules and ground, not by elevation. A drop shadow
+     on a dark ground reads as smudge rather than as lift. */
+  --shadow-card: none;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
@@ -201,36 +115,6 @@
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
   --color-info-line: var(--info-line);
-
-  /* A real scale, rather than three sizes a few pixels apart. */
-  --text-display: 2.25rem;
-  --text-display--line-height: 1.08;
-  --text-display--letter-spacing: -0.03em;
-  --text-title: 1.5rem;
-  --text-title--line-height: 1.2;
-  --text-title--letter-spacing: -0.022em;
-  --text-offer: 1.3125rem;
-  --text-offer--line-height: 1.2;
-  --text-offer--letter-spacing: -0.018em;
-  --text-lead: 1.0625rem;
-  --text-lead--line-height: 1.6;
-
-  --shadow-card: var(--shadow-card);
-  --shadow-raised: var(--shadow-raised);
-}
-
-/* Most dark-mode work is done by the tokens above, but a few places still have
-   to branch (an inverted control, a different mix ratio). This variant covers
-   both the explicit attribute and the system preference. */
-@custom-variant dark {
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
-      @slot;
-    }
-  }
-  &:where(:root[data-theme="dark"], :root[data-theme="dark"] *) {
-    @slot;
-  }
 }
 
 @layer base {
@@ -247,45 +131,105 @@
   }
 
   /* Every figure that sits in a column or gets compared to another figure.
-     Proportional digits make a column of weights look ragged. */
-  .tabular {
+     Proportional digits make a column of percentages look ragged. */
+  .tabular,
+  .tabular-nums {
+    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
   }
 
-  /* One focus treatment everywhere, visible against both themes. */
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 0.375rem;
+    border-radius: 0.25rem;
   }
 
   ::selection {
-    background: color-mix(in oklab, var(--accent) 24%, transparent);
+    background: color-mix(in oklab, var(--accent) 30%, transparent);
   }
 }
 
 @layer components {
-  /* A tier chip. The element sets `--tier` inline and this derives background,
-     text, and border from it, so adding a rate class means one variable rather
-     than three hand-picked shades. */
+  /* ---- instrument vocabulary ------------------------------------------- */
+
+  /* A section label. Small, spaced, monospaced: the print above a gauge, not a
+     heading competing with the number under it. */
+  .gauge-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+
+  /* The number itself. Large, monospaced, and the thing the eye lands on. */
+  .readout {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .readout-lg {
+    font-size: 2.75rem;
+  }
+  .readout-md {
+    font-size: 1.75rem;
+  }
+  /* Reserved for a value that was measured rather than assumed. */
+  .readout-live {
+    color: var(--accent);
+  }
+
+  /* A horizontal track and its filled portion. */
+  .track {
+    position: relative;
+    height: 0.5rem;
+    border-radius: 0.125rem;
+    background: var(--surface-inset);
+    box-shadow: inset 0 0 0 1px var(--line);
+    overflow: hidden;
+  }
+  .track-fill {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    background: var(--accent);
+  }
+  .track-fill-quiet {
+    background: var(--ink-faint);
+  }
+  /* A threshold marker sits above the fill and does not move with it. */
+  .track-mark {
+    position: absolute;
+    inset-block: -0.1875rem;
+    width: 1px;
+    background: var(--ink-subtle);
+  }
+
+  /* ---- shared surfaces -------------------------------------------------- */
+
   .tier-chip {
     --tier: var(--tier-none);
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    border-radius: 9999px;
-    border: 1px solid color-mix(in oklab, var(--tier) 34%, transparent);
-    background: color-mix(in oklab, var(--tier) 13%, var(--surface));
-    color: color-mix(in oklab, var(--tier) 66%, var(--ink));
-    padding: 0.1875rem 0.625rem;
-    font-size: 0.75rem;
-    font-weight: 550;
+    border-radius: 0.25rem;
+    border: 1px solid color-mix(in oklab, var(--tier) 30%, transparent);
+    background: color-mix(in oklab, var(--tier) 11%, var(--surface));
+    color: color-mix(in oklab, var(--tier) 72%, var(--ink));
+    padding: 0.1875rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
     line-height: 1.45;
     white-space: nowrap;
   }
 
-  /* Carries the tier hue at full strength. Small enough that full chroma reads
-     as a signal rather than as decoration. */
   .tier-dot {
     --tier: var(--tier-none);
     display: inline-block;
@@ -296,52 +240,50 @@
     flex: none;
   }
 
-  /* The rail down the left of an expanded row, tinted to its tier so evidence
-     stays visually attached to the verdict it supports. */
   .tier-rail {
     --tier: var(--tier-none);
-    box-shadow: inset 2px 0 0 0 color-mix(in oklab, var(--tier) 42%, transparent);
+    box-shadow: inset 2px 0 0 0 color-mix(in oklab, var(--tier) 55%, transparent);
   }
 
+  /* A panel, separated by a hairline rule rather than by elevation. */
   .card {
-    background: var(--surface-raised);
+    background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 0.875rem;
-    box-shadow: var(--shadow-card);
+    border-radius: 0.5rem;
   }
 
   /* Advisory panels: one shape, three intents. */
   .note {
-    border-radius: 0.75rem;
+    border-radius: 0.375rem;
     border-width: 1px;
     border-style: solid;
-    padding: 0.875rem 1rem;
-    font-size: 0.875rem;
+    border-left-width: 2px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
     line-height: 1.6;
   }
   .note-info {
     background: var(--info-soft);
     border-color: var(--info-line);
-    color: color-mix(in oklab, var(--info) 78%, var(--ink));
+    color: color-mix(in oklab, var(--info) 60%, var(--ink));
   }
   .note-warn {
     background: var(--warn-soft);
     border-color: var(--warn-line);
-    color: color-mix(in oklab, var(--warn) 78%, var(--ink));
+    color: color-mix(in oklab, var(--warn) 60%, var(--ink));
   }
   .note-danger {
     background: var(--danger-soft);
     border-color: var(--danger-line);
-    color: color-mix(in oklab, var(--danger) 78%, var(--ink));
+    color: color-mix(in oklab, var(--danger) 60%, var(--ink));
   }
 
-  /* Quoted guideline text. This is the load-bearing element of the whole
-     interface -- it is the evidence -- so it gets a deliberate treatment rather
-     than inheriting a generic blockquote. */
+  /* Quoted source text. This is the load-bearing element of the underwriting
+     interface: it is the evidence. */
   .excerpt {
     background: var(--surface-inset);
     border-left: 2px solid var(--line-strong);
-    border-radius: 0 0.375rem 0.375rem 0;
+    border-radius: 0 0.25rem 0.25rem 0;
     padding: 0.5rem 0.75rem;
     font-size: 0.8125rem;
     line-height: 1.65;

@@ -2,7 +2,7 @@
 
 > **Illustrative demonstration only.** This tool is not affiliated with, endorsed
 > by, or connected to any insurance carrier. **Every carrier in it is fictional
-> and every guideline is fabricated** — see [Corpus](#corpus) below. Underwriting
+> and every guideline is fabricated**, see [Corpus](#corpus) below. Underwriting
 > guidelines change frequently; nothing here should be used for underwriting,
 > sales, or advisory purposes.
 
@@ -59,9 +59,9 @@ multi-condition 90%, cross-carrier 90.6%.
 
 **Labels are generated, not hand-written, and have not been reviewed.** They
 come from `tools/eval_oracle.py`, which computes outcomes from the published
-thresholds in `tools/carrier_data.py`. The pipeline never reads that file — it
+thresholds in `tools/carrier_data.py`. The pipeline never reads that file. It
 reads rendered PDFs through classification, vision extraction, an index, and a
-model — so the labels are independent of the system under test. They are *not*
+model. So the labels are independent of the system under test. They are *not*
 independent of their author: oracle and prompt were written by the same person
 from the same documents. `backend/eval/REVIEW.md` is the checklist for closing
 that gap.
@@ -209,8 +209,8 @@ button -- which it did, once, before they shared a file.
 ## Corpus
 
 **There are no real carrier documents in this project.** The corpus is four
-fictional carriers — Northstar Mutual Life, Cardinal Assurance, Meridian Life &
-Annuity, and Granite Peak Financial — defined as structured data in
+fictional carriers, Northstar Mutual Life, Cardinal Assurance, Meridian Life &
+Annuity, and Granite Peak Financial, defined as structured data in
 `tools/carrier_data.py` and rendered to PDFs by `tools/generate_corpus.py`.
 
 Real field underwriting guides are third-party copyrighted material.
@@ -234,8 +234,8 @@ one-page tables would not test the extractor at all:
 - charts long enough that two of the four split across a page break with the
   header repeated
 
-The four carriers disagree with each other on purpose — different rate class
-names, different A1c thresholds, different build limits — so cross-carrier
+The four carriers disagree with each other on purpose, different rate class
+names, different A1c thresholds, different build limits. So cross-carrier
 normalization is a real problem rather than a formality.
 
 ---
@@ -289,7 +289,7 @@ schema can represent an uncited assertion, so one cannot survive parsing.
 the evidence supplied to that carrier's call. An excerpt that cannot be found
 was composed rather than copied, and the claim carrying it is discarded and
 counted. If verification empties the support behind a classification, the
-verdict is **downgraded to an abstention** — a determination whose every
+verdict is **downgraded to an abstention**. A determination whose every
 support was discarded is not a determination.
 
 Each carrier is synthesized in its own call, seeing only its own guide. A
@@ -347,10 +347,10 @@ frontend/src/                React client; see frontend/README.md
 
 Two backends behind one interface, selected by `EMBEDDINGS_BACKEND`:
 
-- **`local`** (default) — `all-MiniLM-L6-v2` via onnxruntime. No API key, no
+- **`local`** (default), `all-MiniLM-L6-v2` via onnxruntime. No API key, no
   network call at query time, ~90MB. This is what makes a fresh clone runnable
   with an empty `.env`.
-- **`voyage`** — `voyage-4-lite`. Better retrieval on domain text, and free at
+- **`voyage`**, `voyage-4-lite`. Better retrieval on domain text, and free at
   this corpus size against a 200M-token allowance.
 
 The brief named `voyage-3`; it carries no free tier, while the
@@ -363,24 +363,24 @@ one interface means the eval can report the difference rather than assert it.
 
 Full detail is in the source comments; the short version:
 
-- **Secrets** — environment only, via `pydantic-settings`. `.env` gitignored
+- **Secrets**, environment only, via `pydantic-settings`. `.env` gitignored
   from the first commit. The Anthropic key is server-side only; the frontend
   calls this API and never the model provider.
-- **Access control** — shared-secret gate on `/search`. The app **refuses to
+- **Access control**, shared-secret gate on `/search`. The app **refuses to
   start** with no secret configured unless `DEV_MODE=true` is set explicitly, so
   a deploy cannot silently ship an open endpoint against a paid API. Rate
   limited per client, 20/hour by default.
-- **Prompt injection** — retrieved carrier text is untrusted input. The
+- **Prompt injection**, retrieved carrier text is untrusted input. The
   strongest mitigation is architectural: there are **no write paths at all**, so
   there is nothing for an injection to accomplish beyond changing text on a
   screen. Beyond that, retrieved content is fenced with delimiters that are
   stripped from the content itself so it cannot close the fence early, and model
   output is validated against a Pydantic schema before anything renders it.
-- **Input handling** — length-capped and validated at the boundary; over-length
+- **Input handling**, length-capped and validated at the boundary; over-length
   queries are **rejected, not truncated**, because a truncated query answers a
   question nobody asked. Strict CORS allowlist, never a wildcard. HSTS,
   `X-Content-Type-Options`, and a restrictive CSP on every response.
-- **Secret scanning** — `detect-secrets` runs over every tracked file, wired as
+- **Secret scanning**, `detect-secrets` runs over every tracked file, wired as
   a pre-commit hook in `.pre-commit-config.yaml`. The current scan reports four
   hits, all in `backend/tests/`: the literal fixtures `test-secret`,
   `correct-horse`, `battery-staple`, and `nope`, which exist so the auth tests
@@ -388,7 +388,7 @@ Full detail is in the source comments; the short version:
   `.secrets.baseline`, so anything new fails the commit rather than blending in.
   Full history was checked separately: `.env` has never been tracked, no corpus
   PDF has ever been committed, and no key-shaped string appears in any diff.
-- **Logging** — query text is logged as a hash plus a short prefix, never in the
+- **Logging**, query text is logged as a hash plus a short prefix, never in the
   clear. The demo inputs are synthetic, but a real deployment would carry health
   details about named individuals in every query.
 
@@ -403,8 +403,8 @@ Full detail is in the source comments; the short version:
   hypertension question. 800 is enforced as a ceiling; the floor is the section.
   Short chunks are compensated for by prefixing carrier and section heading to
   the embedded representation.
-- **Embedding model.** `voyage-4-lite` rather than `voyage-3` — see above.
-- **Corpus.** Synthetic rather than public carrier guides — see above.
+- **Embedding model.** `voyage-4-lite` rather than `voyage-3`, see above.
+- **Corpus.** Synthetic rather than public carrier guides, see above.
 
 ---
 

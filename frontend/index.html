@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Underwriting Copilot — cross-carrier rate class comparison</title>
+    <title>Underwriting Copilot · Innovation Office</title>
     <meta
       name="description"
       content="Describe a prospect in plain language and get likely rate classes across four carriers, each with the guideline text behind it and a page citation. Illustrative demonstration; all carriers and guidelines are fictional."
@@ -20,22 +20,6 @@
       content="Cross-carrier life insurance rate class comparison with verified citations. Illustrative demonstration; every carrier is fictional."
     />
     <meta property="og:type" content="website" />
-    <script>
-      // Applies a stored colour scheme before first paint. It has to run here,
-      // inline and ahead of the bundle: doing it in React means the page paints
-      // light, then flips, and a white flash on a dark-themed machine is worse
-      // than not offering the choice. Kept deliberately tiny and dependency
-      // free -- it is the only script that blocks rendering.
-      //
-      // Absent or invalid storage leaves the attribute off, which hands the
-      // decision to the prefers-color-scheme query in index.css.
-      try {
-        var s = localStorage.getItem('uc-color-scheme');
-        if (s === 'light' || s === 'dark') {
-          document.documentElement.setAttribute('data-theme', s);
-        }
-      } catch (e) {}
-    </script>
   </head>
   <body>
     <div id="root"></div>
