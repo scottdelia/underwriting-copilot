@@ -45,22 +45,22 @@ const EXAMPLES: string[] = exampleQueries;
 function Mark() {
   return (
     <svg viewBox="0 0 32 32" aria-hidden className="size-8 shrink-0">
-      <rect width="32" height="32" rx="8" fill="var(--ink)" />
-      <rect
-        x="7"
-        y="8"
-        width="18"
-        height="3.5"
-        rx="1.75"
-        fill="var(--tier-preferred-plus)"
-      />
+      {/* Brand teal ground with the ranked bars in the action colour and white.
+          The bars used to be tier hues on a near-black square, which worked
+          while the tiers were bright on a dark theme; against the current
+          palette the best tier is a dark teal and it disappeared into the
+          square. The mark only has to say "carriers, ranked", so it uses the
+          two colours guaranteed to read on the brand ground. */}
+      <rect width="32" height="32" rx="8" fill="var(--accent)" />
+      <rect x="7" y="8" width="18" height="3.5" rx="1.75" fill="var(--cta)" />
       <rect
         x="7"
         y="14"
         width="13"
         height="3.5"
         rx="1.75"
-        fill="var(--tier-standard-plus)"
+        fill="var(--surface)"
+        opacity="0.92"
       />
       <rect
         x="7"
@@ -69,7 +69,7 @@ function Mark() {
         height="3.5"
         rx="1.75"
         fill="var(--surface)"
-        opacity="0.85"
+        opacity="0.55"
       />
     </svg>
   );
@@ -285,7 +285,7 @@ export default function App() {
             <button
               type="submit"
               disabled={loading || !query.trim()}
-              className="rounded-lg bg-accent px-5 py-2 text-sm font-semibold text-accent-ink transition-all hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-lg bg-cta px-5 py-2 text-sm font-semibold text-cta-ink transition-all hover:bg-cta-hover disabled:cursor-not-allowed disabled:opacity-40"
             >
               {loading ? 'Reading guides…' : 'Compare carriers'}
             </button>

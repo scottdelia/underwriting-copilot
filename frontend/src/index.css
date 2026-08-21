@@ -7,70 +7,98 @@
 @import "@fontsource-variable/jetbrains-mono";
 
 /* ---------------------------------------------------------------------------
-   DESIGN TOKENS  ::  instrument panel
+   DESIGN TOKENS
 
    One committed look. There is no light mode, no dark mode, and no toggle.
-
    A theme switch is a way of declining to make a decision, and it doubles the
-   surface every colour choice has to survive. These pages exist to show
-   measurements, so they are built like something you read measurements off:
-   a dark ground, hairline rules instead of cards, one signal colour reserved
-   for live values, and monospaced figures so a column of numbers lines up on
-   the decimal.
+   surface every colour choice has to survive.
+
+   The palette is drawn from quility.com: a white ground, near-black text with
+   a green cast, deep forest teal as the brand colour, and yellow reserved
+   strictly for actions. Those roles are worth keeping separate rather than
+   collapsing into one "accent" -- yellow is unreadable as text or as a focus
+   ring on white, and teal on a button is not what that site does. So `accent`
+   carries the brand everywhere it has to be legible, and `cta` is a fill for
+   the thing you click.
+
+   The tier ladder is drawn from the same family: the site's teal, mint, blue,
+   and coral, darkened where a hue had to survive as small text on white.
 
    Every colour, size, and radius is declared here and nowhere else. The block
-   is meant to be lifted: the portfolio shell and the three applications use it
-   verbatim, so they read as one body of work rather than four projects that
-   happen to share an author.
+   is meant to be lifted, so if the portfolio shell or the sibling projects are
+   still on the previous dark palette, they need this block copied across or
+   they will read as separate work.
 --------------------------------------------------------------------------- */
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
   /* Ink. Four steps, because three could not separate a heading from a label
-     from a caption without reaching for opacity. */
-  --ink: #e8edf5;
-  --ink-muted: #a3aec2;
-  --ink-subtle: #737f94;
-  --ink-faint: #4d5768;
+     from a caption without reaching for opacity. Carries a slight green cast
+     so it sits with the teal rather than against it. */
+  /* Every step clears 4.5:1 against `surface-sunken`, the darkest ground any
+     of them lands on -- not against white. Tuning the faint step against white
+     alone passed on a card and failed in the footer and under the input, which
+     is exactly where it is used.
 
-  /* Ground and the planes above it. `sunken` is the page itself. */
-  --surface-sunken: #080a10;
-  --surface: #0d1017;
-  --surface-raised: #11151e;
-  --surface-inset: #0a0d14;
+     The faint step carries citation references, "northstar_guide.pdf p.4",
+     the text a reader uses to go and check a claim. A citation nobody can read
+     does not do its job, so it does not get to be decorative grey. The cost is
+     a compressed ramp: four steps now sit closer together than they would if
+     the last one were free to fade out. That is the right trade here. */
+  --ink: #16211f;
+  --ink-muted: #45534f;
+  --ink-subtle: #53615d;
+  --ink-faint: #61706c;
 
-  --line: #1b212c;
-  --line-strong: #2b3444;
+  /* Ground and the planes above it. `sunken` is the page itself: a hint off
+     white, so a white card reads as a card without needing a shadow. */
+  --surface-sunken: #f3f6f5;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-inset: #eef2f1;
 
-  /* One signal colour, reserved for values that were actually measured. If it
-     is on the screen in this colour, a number produced it. */
-  --accent: #4dd4ac;
-  --accent-hover: #6ee0bd;
-  --accent-ink: #06120e;
-  --accent-soft: #0e2620;
+  --line: #dfe6e4;
+  --line-strong: #c2cdca;
+
+  /* The brand colour. Links, focus rings, live readouts, filled tracks --
+     anywhere the eye should be pulled and the thing has to stay legible. */
+  --accent: #005851;
+  --accent-hover: #00423d;
+  --accent-ink: #ffffff;
+  --accent-soft: #daf3f0;
+
+  /* Actions only. Yellow on white cannot carry text or a hairline, but it is
+     the strongest button on the reference site and it earns that job here. */
+  --cta: #ffcc00;
+  --cta-hover: #f0bd00;
+  --cta-ink: #16211f;
 
   /* The rate-class ladder, best to worst. One hue per tier; backgrounds and
      borders are mixed from it at render time, so a tier is one number to
      change rather than three shades that drift apart. */
-  --tier-preferred-plus: #4dd4ac;
-  --tier-preferred: #3fbf9a;
-  --tier-standard-plus: #58b0e8;
-  --tier-standard: #8a94a8;
-  --tier-table-rated: #e0a340;
-  --tier-decline: #e8737f;
+  /* Each hue is the darkest version that still reads as itself, because these
+     are rendered as small text in a chip as well as as a dot. The reference
+     site can use its brighter mint and yellow at display size on large blocks;
+     at 11px on white they would not be readable. */
+  --tier-preferred-plus: #005851;
+  --tier-preferred: #1f8676;
+  --tier-standard-plus: #0069bd;
+  --tier-standard: #5b6a66;
+  --tier-table-rated: #9d6c00;
+  --tier-decline: #c23f31;
   /* An abstention is not a bad outcome, so it does not get a bad colour. */
-  --tier-none: #5d6878;
+  --tier-none: #697a75;
 
-  --warn: #e0a340;
-  --warn-soft: #1e1708;
-  --warn-line: #443212;
-  --danger: #e8737f;
-  --danger-soft: #200e11;
-  --danger-line: #4a2126;
-  --info: #58b0e8;
-  --info-soft: #08161f;
-  --info-line: #123244;
+  --warn: #9d6c00;
+  --warn-soft: #fdf6e3;
+  --warn-line: #f0dfae;
+  --danger: #c23f31;
+  --danger-soft: #fdeeec;
+  --danger-line: #f4cbc6;
+  --info: #0069bd;
+  --info-soft: #eaf4fd;
+  --info-line: #c3ddf5;
 
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, sans-serif;
@@ -105,6 +133,10 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
+
+  --color-cta: var(--cta);
+  --color-cta-hover: var(--cta-hover);
+  --color-cta-ink: var(--cta-ink);
 
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
