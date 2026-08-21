@@ -82,30 +82,29 @@ export function ResultView({ result }: { result: ComparisonResponse }) {
             <circle cx="8" cy="11" r="0.85" fill="currentColor" />
           </svg>
           <p>
-            <span className="font-semibold">
-              {result.unverified_claims_dropped} unverifiable{' '}
-              {result.unverified_claims_dropped === 1
-                ? 'claim was'
-                : 'claims were'}{' '}
-              discarded.
+            <span className="font-bold">
+              The tool caught itself making{' '}
+              {result.unverified_claims_dropped}{' '}
+              {result.unverified_claims_dropped === 1 ? 'claim' : 'claims'} up.
             </span>{' '}
-            Their quoted text could not be found in the cited guide, so they are
-            not shown.
+            It quoted the guide, then the quote turned out not to be in the
+            guide. Those {result.unverified_claims_dropped === 1 ? 'was' : 'were'}{' '}
+            thrown away instead of being shown to you.
           </p>
         </div>
       )}
 
       {outOfScope ? (
         <section className="card p-6">
-          <h2 className="text-title font-semibold text-ink">
-            The indexed guides cannot answer this
+          <h2 className="text-title font-extrabold text-ink-strong">
+            None of these four guides covers that
           </h2>
           <p className="mt-3 max-w-prose text-lead text-ink-muted">
             {result.routing_reason}
           </p>
           <p className="mt-4 border-t border-line pt-4 text-sm text-ink-subtle">
-            Answering anyway would mean inventing a guideline. Nothing was sent
-            to a model beyond classifying the question.
+            Answering anyway would mean making up a guideline. Beyond working
+            out that the question was off-topic, no AI was involved.
           </p>
         </section>
       ) : (
@@ -119,14 +118,15 @@ export function ResultView({ result }: { result: ComparisonResponse }) {
           {verdicts.length > 0 && (
             <section className="card overflow-hidden">
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line px-5 py-3.5">
-                <h2 className="text-sm font-semibold text-ink">
-                  Carrier comparison
+                <h2 className="text-sm font-bold text-ink-strong">
+                  What each carrier would likely offer
                 </h2>
                 <p className="text-xs text-ink-subtle">
-                  Ranked best offer first ·{' '}
+                  Best offer first.{' '}
                   <span className="tabular">{classifiedCount}</span> of{' '}
-                  <span className="tabular">{verdicts.length}</span> classified ·
-                  open a row for the guideline text
+                  <span className="tabular">{verdicts.length}</span> could be
+                  answered from the guides. Open a row to read the wording it
+                  used.
                 </p>
               </div>
               <ul>

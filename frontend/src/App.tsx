@@ -168,9 +168,10 @@ export default function App() {
               Which carrier writes this case?
             </h1>
             <p className="mt-3 text-lead text-ink-muted">
-              Describe a prospect in plain language. Get the likely rate class
-              from every carrier, ranked, each one carrying the guideline text
-              it rests on and the page it came from.
+              Type a prospect the way you would say it out loud. You get what
+              each of four carriers would likely offer, best first, and the
+              exact line of the guide behind every answer. Where the guide does
+              not cover the case, it says so instead of guessing.
             </p>
           </div>
         )}
