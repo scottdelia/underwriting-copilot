@@ -3,112 +3,102 @@
 /* Self-hosted rather than pulled from a CDN. A font request to a third party on
    page load carries the reader's IP to someone who did not need it, and these
    pages are about being careful with data. */
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/montserrat";
 
 /* ---------------------------------------------------------------------------
    DESIGN TOKENS
 
-   One committed look. There is no light mode, no dark mode, and no toggle.
-   A theme switch is a way of declining to make a decision, and it doubles the
-   surface every colour choice has to survive.
+   One committed look. No light mode, no dark mode, no toggle: a theme switch
+   doubles the surface every colour choice has to survive and is a way of
+   declining to decide.
 
-   The palette is drawn from quility.com: a white ground, near-black text with
-   a green cast, deep forest teal as the brand colour, and yellow reserved
-   strictly for actions. Those roles are worth keeping separate rather than
-   collapsing into one "accent" -- yellow is unreadable as text or as a focus
-   ring on white, and teal on a button is not what that site does. So `accent`
-   carries the brand everywhere it has to be legible, and `cta` is a fill for
-   the thing you click.
+   The palette, the typeface, and the geometry are read off quility.com rather
+   than invented, so this reads as work done for them rather than work done
+   nearby. Deep forest #0E3631 and the button green #005851 are theirs; so is
+   the mint #46C3B2, the signal yellow #FFCC00, and Montserrat at 800 to 900
+   for headings. So is the square geometry: every corner on their site is 0px,
+   and matching that is most of the reason these pages feel related to it.
 
-   The tier ladder is drawn from the same family: the site's teal, mint, blue,
-   and coral, darkened where a hue had to survive as small text on white.
+   Structure is unchanged from the instrument-panel version. Figures still lead
+   at 24 to 44px, section labels are still small and spaced, and a bar still
+   carries its threshold as a fixed mark. Only the skin moved.
 
-   Every colour, size, and radius is declared here and nowhere else. The block
-   is meant to be lifted, so if the portfolio shell or the sibling projects are
-   still on the previous dark palette, they need this block copied across or
-   they will read as separate work.
+   This block is meant to be lifted. The portfolio shell and the three
+   applications use it verbatim.
 --------------------------------------------------------------------------- */
 
 :root {
   color-scheme: light;
 
-  /* Ink. Four steps, because three could not separate a heading from a label
-     from a caption without reaching for opacity. Carries a slight green cast
-     so it sits with the teal rather than against it. */
-  /* Every step clears 4.5:1 against `surface-sunken`, the darkest ground any
-     of them lands on -- not against white. Tuning the faint step against white
-     alone passed on a card and failed in the footer and under the input, which
-     is exactly where it is used.
+  /* Ink. Their body copy is #333; headings go to the brand forest. */
+  --ink: #333333;
+  --ink-strong: #0e3631;
+  --ink-muted: #55635f;
+  /* Both of these are darker than they look like they should be.
+     They carry 11px gauge labels and footnotes, and the lighter
+     values they started at came in at 3.5:1 and 2.2:1 against the
+     page. Measured, not eyeballed. */
+  --ink-subtle: #5c6a65;
+  --ink-faint: #626f6a;
 
-     The faint step carries citation references, "northstar_guide.pdf p.4",
-     the text a reader uses to go and check a claim. A citation nobody can read
-     does not do its job, so it does not get to be decorative grey. The cost is
-     a compressed ramp: four steps now sit closer together than they would if
-     the last one were free to fade out. That is the right trade here. */
-  --ink: #16211f;
-  --ink-muted: #45534f;
-  --ink-subtle: #53615d;
-  --ink-faint: #61706c;
-
-  /* Ground and the planes above it. `sunken` is the page itself: a hint off
-     white, so a white card reads as a card without needing a shadow. */
-  --surface-sunken: #f3f6f5;
+  /* Ground and the planes above it. `sunken` is their alternating band. */
+  --surface-sunken: #f8f8f8;
   --surface: #ffffff;
   --surface-raised: #ffffff;
-  --surface-inset: #eef2f1;
+  --surface-inset: #f1f5f4;
+  /* The brand band: white type on deep forest, as their header and footer. */
+  --surface-brand: #0e3631;
 
-  --line: #dfe6e4;
-  --line-strong: #c2cdca;
+  --line: #e3e9e7;
+  --line-strong: #c4d0cd;
 
-  /* The brand colour. Links, focus rings, live readouts, filled tracks --
-     anywhere the eye should be pulled and the thing has to stay legible. */
+  /* One signal colour, reserved for values that were actually measured. The
+     deep green carries text; the mint carries fills. Mint on white is about
+     2:1, which is fine for a bar and not for a word, so the two are separate
+     tokens rather than one token used carelessly. */
   --accent: #005851;
-  --accent-hover: #00423d;
+  --accent-hover: #004641;
   --accent-ink: #ffffff;
   --accent-soft: #daf3f0;
-
-  /* Actions only. Yellow on white cannot carry text or a hairline, but it is
-     the strongest button on the reference site and it earns that job here. */
-  --cta: #ffcc00;
-  --cta-hover: #f0bd00;
-  --cta-ink: #16211f;
+  --accent-bright: #46c3b2;
 
   /* The rate-class ladder, best to worst. One hue per tier; backgrounds and
      borders are mixed from it at render time, so a tier is one number to
      change rather than three shades that drift apart. */
-  /* Each hue is the darkest version that still reads as itself, because these
-     are rendered as small text in a chip as well as as a dot. The reference
-     site can use its brighter mint and yellow at display size on large blocks;
-     at 11px on white they would not be readable. */
   --tier-preferred-plus: #005851;
-  --tier-preferred: #1f8676;
-  --tier-standard-plus: #0069bd;
-  --tier-standard: #5b6a66;
-  --tier-table-rated: #9d6c00;
-  --tier-decline: #c23f31;
-  /* An abstention is not a bad outcome, so it does not get a bad colour. */
-  --tier-none: #697a75;
+  --tier-preferred: #2e9e8e;
+  --tier-standard-plus: #0069c0;
+  --tier-standard: #6e807d;
+  --tier-table-rated: #8a6a00;
+  --tier-decline: #a8443f;
+  /* An abstention is not a bad outcome, so it does not get a bad colour. It
+     does get a readable one: the first value here came in at 4.15:1 on its own
+     chip, and "I do not know" is the one verdict that must not be hard to
+     read. */
+  --tier-none: #7a8784;
 
-  --warn: #9d6c00;
-  --warn-soft: #fdf6e3;
-  --warn-line: #f0dfae;
-  --danger: #c23f31;
-  --danger-soft: #fdeeec;
-  --danger-line: #f4cbc6;
-  --info: #0069bd;
-  --info-soft: #eaf4fd;
-  --info-line: #c3ddf5;
+  /* Their signal yellow is #FFCC00, which cannot carry text on white. The
+     token is darkened to pass; the bright original is kept for fills. */
+  --warn: #8a6a00;
+  --warn-bright: #ffcc00;
+  --warn-soft: #fff8e1;
+  --warn-line: #ecd9a2;
+  --danger: #a8443f;
+  --danger-soft: #fcefee;
+  --danger-line: #eec7c4;
+  --info: #0069c0;
+  --info-soft: #e9f3fc;
+  --info-line: #bcd9f2;
 
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, sans-serif;
-  /* Figures, labels, and anything that gets compared to something above or
-     below it. */
-  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo,
-    Consolas, monospace;
+  --font-sans: "Montserrat Variable", Montserrat, "Open Sans", Lato, Arial,
+    sans-serif;
+  /* Kept for genuinely code-like content. Figures do not use it: Montserrat
+     has tabular numerals and staying in one family is the brand. */
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Panels are separated by rules and ground, not by elevation. A drop shadow
-     on a dark ground reads as smudge rather than as lift. */
+  /* Every corner on quility.com is 0px. Matching that is most of the reason
+     these pages read as related to theirs. */
+  --radius: 0px;
   --shadow-card: none;
 }
 
@@ -117,6 +107,7 @@
   --font-mono: var(--font-mono);
 
   --color-ink: var(--ink);
+  --color-ink-strong: var(--ink-strong);
   --color-ink-muted: var(--ink-muted);
   --color-ink-subtle: var(--ink-subtle);
   --color-ink-faint: var(--ink-faint);
@@ -125,6 +116,7 @@
   --color-surface-sunken: var(--surface-sunken);
   --color-surface-raised: var(--surface-raised);
   --color-surface-inset: var(--surface-inset);
+  --color-surface-brand: var(--surface-brand);
 
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
@@ -133,10 +125,7 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
-
-  --color-cta: var(--cta);
-  --color-cta-hover: var(--cta-hover);
-  --color-cta-ink: var(--cta-ink);
+  --color-accent-bright: var(--accent-bright);
 
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
@@ -162,48 +151,54 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Their headings run 800 to 900. Anything lighter reads as a different
+     company. */
+  h1,
+  h2,
+  h3 {
+    color: var(--ink-strong);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
   /* Every figure that sits in a column or gets compared to another figure.
      Proportional digits make a column of percentages look ragged. */
   .tabular,
   .tabular-nums {
-    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
   }
 
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 0.25rem;
+    border-radius: var(--radius);
   }
 
   ::selection {
-    background: color-mix(in oklab, var(--accent) 30%, transparent);
+    background: var(--accent-soft);
   }
 }
 
 @layer components {
   /* ---- instrument vocabulary ------------------------------------------- */
 
-  /* A section label. Small, spaced, monospaced: the print above a gauge, not a
+  /* A section label. Small, spaced, upper case: the print above a gauge, not a
      heading competing with the number under it. */
   .gauge-label {
-    font-family: var(--font-mono);
     font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.11em;
+    font-weight: 700;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--ink-subtle);
   }
 
-  /* The number itself. Large, monospaced, and the thing the eye lands on. */
+  /* The number itself. Large and the thing the eye lands on. */
   .readout {
-    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
-    letter-spacing: -0.03em;
+    font-weight: 800;
+    letter-spacing: -0.025em;
     line-height: 1;
-    color: var(--ink);
+    color: var(--ink-strong);
   }
   .readout-lg {
     font-size: 2.75rem;
@@ -220,7 +215,7 @@
   .track {
     position: relative;
     height: 0.5rem;
-    border-radius: 0.125rem;
+    border-radius: var(--radius);
     background: var(--surface-inset);
     box-shadow: inset 0 0 0 1px var(--line);
     overflow: hidden;
@@ -229,7 +224,7 @@
     position: absolute;
     inset-block: 0;
     left: 0;
-    background: var(--accent);
+    background: var(--accent-bright);
   }
   .track-fill-quiet {
     background: var(--ink-faint);
@@ -249,14 +244,15 @@
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    border-radius: 0.25rem;
-    border: 1px solid color-mix(in oklab, var(--tier) 30%, transparent);
-    background: color-mix(in oklab, var(--tier) 11%, var(--surface));
-    color: color-mix(in oklab, var(--tier) 72%, var(--ink));
+    border-radius: var(--radius);
+    border: 1px solid color-mix(in oklab, var(--tier) 34%, transparent);
+    background: color-mix(in oklab, var(--tier) 9%, var(--surface));
+    /* 70, not 84. At 84 the lighter tiers landed at 4.47:1 against
+       their own tinted chip, just under the 4.5 they need. */
+    color: color-mix(in oklab, var(--tier) 70%, var(--ink-strong));
     padding: 0.1875rem 0.5rem;
-    font-family: var(--font-mono);
     font-size: 0.6875rem;
-    font-weight: 500;
+    font-weight: 700;
     letter-spacing: 0.04em;
     line-height: 1.45;
     white-space: nowrap;
@@ -274,22 +270,22 @@
 
   .tier-rail {
     --tier: var(--tier-none);
-    box-shadow: inset 2px 0 0 0 color-mix(in oklab, var(--tier) 55%, transparent);
+    box-shadow: inset 3px 0 0 0 var(--tier);
   }
 
   /* A panel, separated by a hairline rule rather than by elevation. */
   .card {
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 0.5rem;
+    border-radius: var(--radius);
   }
 
   /* Advisory panels: one shape, three intents. */
   .note {
-    border-radius: 0.375rem;
+    border-radius: var(--radius);
     border-width: 1px;
     border-style: solid;
-    border-left-width: 2px;
+    border-left-width: 3px;
     padding: 0.75rem 1rem;
     font-size: 0.8125rem;
     line-height: 1.6;
@@ -297,25 +293,28 @@
   .note-info {
     background: var(--info-soft);
     border-color: var(--info-line);
-    color: color-mix(in oklab, var(--info) 60%, var(--ink));
+    border-left-color: var(--info);
+    color: color-mix(in oklab, var(--info) 45%, var(--ink));
   }
   .note-warn {
     background: var(--warn-soft);
     border-color: var(--warn-line);
-    color: color-mix(in oklab, var(--warn) 60%, var(--ink));
+    border-left-color: var(--warn);
+    color: color-mix(in oklab, var(--warn) 45%, var(--ink));
   }
   .note-danger {
     background: var(--danger-soft);
     border-color: var(--danger-line);
-    color: color-mix(in oklab, var(--danger) 60%, var(--ink));
+    border-left-color: var(--danger);
+    color: color-mix(in oklab, var(--danger) 45%, var(--ink));
   }
 
   /* Quoted source text. This is the load-bearing element of the underwriting
      interface: it is the evidence. */
   .excerpt {
     background: var(--surface-inset);
-    border-left: 2px solid var(--line-strong);
-    border-radius: 0 0.25rem 0.25rem 0;
+    border-left: 3px solid var(--line-strong);
+    border-radius: var(--radius);
     padding: 0.5rem 0.75rem;
     font-size: 0.8125rem;
     line-height: 1.65;
