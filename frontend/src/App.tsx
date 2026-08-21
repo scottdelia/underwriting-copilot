@@ -51,14 +51,13 @@ function Mark() {
           palette the best tier is a dark teal and it disappeared into the
           square. The mark only has to say "carriers, ranked", so it uses the
           two colours guaranteed to read on the brand ground. */}
-      <rect width="32" height="32" rx="8" fill="var(--accent)" />
-      <rect x="7" y="8" width="18" height="3.5" rx="1.75" fill="var(--cta)" />
+      <rect width="32" height="32" fill="var(--accent)" />
+      <rect x="7" y="8" width="18" height="3.5" fill="var(--cta)" />
       <rect
         x="7"
         y="14"
         width="13"
         height="3.5"
-        rx="1.75"
         fill="var(--surface)"
         opacity="0.92"
       />
@@ -67,7 +66,6 @@ function Mark() {
         y="20"
         width="15"
         height="3.5"
-        rx="1.75"
         fill="var(--surface)"
         opacity="0.55"
       />
@@ -144,15 +142,15 @@ export default function App() {
     <div className="min-h-screen bg-surface-sunken">
       <Disclaimer />
 
-      <header className="border-b border-line bg-surface">
+      <header className="bg-surface-brand">
         <div className="mx-auto flex max-w-[76rem] items-center justify-between gap-4 px-5 py-3">
           <div className="flex min-w-0 items-center gap-2.5">
             <Mark />
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold tracking-tight text-ink">
+              <p className="truncate text-sm font-extrabold tracking-tight text-white">
                 Underwriting Copilot
               </p>
-              <p className="truncate text-xs text-ink-subtle">
+              <p className="truncate text-xs text-white/70">
                 Cross-carrier rate class comparison
               </p>
             </div>
