@@ -88,7 +88,10 @@ export function ResultView({ result }: { result: ComparisonResponse }) {
               {result.unverified_claims_dropped === 1 ? 'claim' : 'claims'} up.
             </span>{' '}
             It quoted the guide, then the quote turned out not to be in the
-            guide. Those {result.unverified_claims_dropped === 1 ? 'was' : 'were'}{' '}
+            guide.{' '}
+            {result.unverified_claims_dropped === 1
+              ? 'That claim was'
+              : 'Those claims were'}{' '}
             thrown away instead of being shown to you.
           </p>
         </div>
