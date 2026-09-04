@@ -396,6 +396,10 @@ Full detail is in the source comments; the short version:
 
 ## Known deviations from the brief
 
+[The brief](docs/underwriting-copilot-poc-spec.md) is the plan, written before
+any code existed. It is kept for provenance rather than as documentation: where
+it and the code disagree, the code is the decision. These are the disagreements.
+
 - **Chunk size.** The brief specifies 400–800 token chunks. Chunks here are
   section-aligned and run 45–170 tokens, because a section in an underwriting
   guide is one condition. Padding to 600 tokens would merge two conditions into
