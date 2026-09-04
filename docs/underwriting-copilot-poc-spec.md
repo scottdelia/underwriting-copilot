@@ -1,9 +1,32 @@
-# Underwriting Copilot POC: Project Brief for Claude Code
+# Underwriting Copilot POC: Project Brief
+
+> **What this is, and what it is not.**
+>
+> This was the working brief, written before any code existed. It is kept in the
+> repository as a record of how the project was planned, not as a description of
+> what it became. Several of its decisions were wrong and were overridden during
+> implementation.
+>
+> **Where the brief and the code disagree, the code is the decision.** The
+> reasoning for each departure is in
+> [Known deviations from the brief](../README.md#known-deviations-from-the-brief).
+>
+> The largest reversal is the corpus. The brief called for ingesting real
+> published carrier guides, with a note that production use would require carrier
+> permission. The implementation generates a fictional corpus instead. That
+> removed the redistribution problem entirely and, more importantly, made
+> extraction ground truth exact at the level of the individual table cell, which
+> turned extraction fidelity from something spot-checked into something measured
+> across all 625 cells. The brief did not anticipate that trade.
+>
+> Chunk sizing was also overridden. The brief specifies 400 to 800 token chunks;
+> the implementation aligns chunks to sections, which run 45 to 170 tokens,
+> because a section in an underwriting guide is a single condition and padding to
+> hit a token target merges two conditions into one chunk. That is how a
+> carrier's diabetes rule ends up cited for a hypertension question.
 
 **Author:** Scott Delia
-**Purpose:** Portfolio demonstration piece for a Head of Applied AI interview
-**Target build time:** 25 to 35 hours total
-**Status:** Greenfield
+**Status:** Superseded by the implementation. Retained for provenance.
 
 ---
 
