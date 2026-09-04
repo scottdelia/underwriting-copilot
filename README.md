@@ -224,7 +224,8 @@ fidelity and citation correctness become measurable rather than spot-checked.
 
 The tradeoff is real and is not hidden: these PDFs are cleaner than scanned
 carrier documents, so the evaluation measures extraction logic, not robustness
-to real-world scan noise. `docs/FINDINGS.md` states this plainly.
+to real-world scan noise. [`docs/FINDINGS.md`](docs/FINDINGS.md) states this
+plainly.
 
 The generated tables are deliberately awkward, because a corpus of clean
 one-page tables would not test the extractor at all:
