@@ -224,7 +224,8 @@ fidelity and citation correctness become measurable rather than spot-checked.
 
 The tradeoff is real and is not hidden: these PDFs are cleaner than scanned
 carrier documents, so the evaluation measures extraction logic, not robustness
-to real-world scan noise. `docs/FINDINGS.md` states this plainly.
+to real-world scan noise. [`docs/FINDINGS.md`](docs/FINDINGS.md) states this
+plainly.
 
 The generated tables are deliberately awkward, because a corpus of clean
 one-page tables would not test the extractor at all:
@@ -395,6 +396,10 @@ Full detail is in the source comments; the short version:
 ---
 
 ## Known deviations from the brief
+
+[The brief](docs/underwriting-copilot-poc-spec.md) is the plan, written before
+any code existed. It is kept for provenance rather than as documentation: where
+it and the code disagree, the code is the decision. These are the disagreements.
 
 - **Chunk size.** The brief specifies 400–800 token chunks. Chunks here are
   section-aligned and run 45–170 tokens, because a section in an underwriting
