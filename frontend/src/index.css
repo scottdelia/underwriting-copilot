@@ -12,12 +12,11 @@
    doubles the surface every colour choice has to survive and is a way of
    declining to decide.
 
-   The palette, the typeface, and the geometry are read off quility.com rather
-   than invented, so this reads as work done for them rather than work done
-   nearby. Deep forest #0E3631 and the button green #005851 are theirs; so is
-   the mint #46C3B2, the signal yellow #FFCC00, and Montserrat at 800 to 900
-   for headings. So is the square geometry: every corner on their site is 0px,
-   and matching that is most of the reason these pages feel related to it.
+   The palette is fixed rather than improvised: a deep forest #0E3631, a button
+   green #005851, a mint #46C3B2, and a signal yellow #FFCC00 held back for
+   actions. Montserrat carries headings at 800 to 900. The geometry is square,
+   every corner 0px, and that is most of the reason these pages feel related to
+   one another.
 
    Structure is unchanged from the instrument-panel version. Figures still lead
    at 24 to 44px, section labels are still small and spaced, and a bar still
@@ -96,8 +95,8 @@
      has tabular numerals and staying in one family is the brand. */
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Every corner on quility.com is 0px. Matching that is most of the reason
-     these pages read as related to theirs. */
+  /* Square throughout. Holding every corner at 0px is most of the reason the
+     shell and the three applications read as one family. */
   --radius: 0px;
   --shadow-card: none;
 }
